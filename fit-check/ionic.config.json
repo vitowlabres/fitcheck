@@ -1,0 +1,7 @@
+{
+  "name": "FitCheck",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

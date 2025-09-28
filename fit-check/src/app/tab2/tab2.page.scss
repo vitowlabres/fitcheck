@@ -1,0 +1,15 @@
+.checkbox-row {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+ion-checkbox::part(container) {
+  border-radius: 50%;   /* círculo */
+  width: 28px;
+  height: 28px;
+}
+
+ion-checkbox::part(mark) {
+  display: none;
+}

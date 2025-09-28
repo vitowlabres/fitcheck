@@ -1,0 +1,24 @@
+.profile-header {
+  display: flex;
+  align-items: center;   /* verticalmente centralizado */
+  gap: 12px;             /* espaço entre avatar e info */
+  padding: 12px;         /* um pouco de espaço interno */
+}
+
+.avatar {
+  width: 160px;           
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;     /* mantém proporção da imagem */
+}
+
+.user-info ion-card-title {
+  margin: 0;
+  font-size: 1rem;       /* tamanho menor se quiser */
+}
+
+.user-info ion-card-subtitle {
+  margin: 0;
+  font-size: 0.8rem;
+  color: gray;
+}

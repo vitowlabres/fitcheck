@@ -11,6 +11,14 @@ ion-title {
     font-weight: bold;
 }
 
+ion-card-title {
+    font-weight: bolder;
+}
+
+ion-card-subtitle {
+    font-weight: bold;
+  }
+
 .icon-weight {
   width: 300px;
   height: 300px;
@@ -25,11 +33,6 @@ ion-title {
   overflow: hidden; 
 }
 
-
-// ion-card.profile-header {
-//   --border-radius: 12px !important; 
-// }
-
 .avatar {
   width: 150px;           
   height: 150px;
@@ -38,15 +41,17 @@ ion-title {
   margin: 5px    
 }
 
+.user-info { 
+  box-shadow: none;
+}
+
 .user-info ion-card-title {
   margin: 0;
-  font-size: 1rem;       
+  font-size: 1rem;   
 }
 
 .user-info ion-card-subtitle {
-  margin: 0;
-  font-size: 0.8rem;
-  color: gray;
+  margin: 8px 0; 
 }
 
 ion-item {

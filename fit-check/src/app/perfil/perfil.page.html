@@ -1,28 +1,29 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Perfil </ion-title>
+    <div class="header-content">
+      <img class="icon-user" src="../../assets/icon/icon-user.png" />
+      <ion-title> Perfil </ion-title>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Perfil</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-card>
-    <div class="profile-header">
-      <img
-        class="avatar"
-        src="https://www.w3schools.com/howto/img_avatar.png"
-      />
-      <div class="user-info">
-        <ion-card-title>Nome</ion-card-title>
-        <ion-card-subtitle>Idade</ion-card-subtitle>
-        <ion-card-subtitle>Tempo de uso</ion-card-subtitle>
-        <ion-card-subtitle>email@email.com</ion-card-subtitle>
-      </div>
-    </div>
+  <ion-card class="profile">
+    <img class="avatar" src="https://www.w3schools.com/howto/img_avatar.png" />
+    <ion-card class="user-info">
+      <ion-card-title>Nome</ion-card-title>
+      <ion-card-subtitle>Idade</ion-card-subtitle>
+      <ion-card-subtitle>Tempo de uso</ion-card-subtitle>
+      <ion-card-subtitle>email@email.com</ion-card-subtitle>
+    </ion-card>
   </ion-card>
+  <ion-item class="treinador-select">
+    <ion-label position="stacked">Treinador:</ion-label>
+    <ion-select placeholder="Selecionar">
+      <ion-select-option value="op1">Opção 1</ion-select-option>
+      <ion-select-option value="op2">Opção 2</ion-select-option>
+      <ion-select-option value="op3">Opção 3</ion-select-option>
+    </ion-select>
+  </ion-item>
   <!-- <app-explore-container name="Perfil page"></app-explore-container> -->
 </ion-content>

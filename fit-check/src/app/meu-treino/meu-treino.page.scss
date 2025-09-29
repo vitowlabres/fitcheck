@@ -1,0 +1,43 @@
+.header-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding-left: 10px;
+}
+
+ion-title {
+    padding: 0;
+    font-weight: bold;
+}
+
+.icon-weight {
+  width: 300px;
+  height: 300px;
+}
+
+ion-button {
+  display: flex;
+  align-items: center;   
+  justify-content: center; 
+  gap: 8px;    
+  font-size: 1.2rem;  
+  font-weight: bold;  
+  margin: 30px 20px;
+  --border-radius: 12px;          
+  --padding-top: 20px;
+  --padding-bottom: 16px;
+}
+
+.center-wrapper {
+  display: flex;
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 100%;            /* ocupa todo o espaço do ion-content */
+  width: 100%;
+}
+
+.icon-weight {
+  width: 300px;
+  height: 300px;
+}

@@ -12,8 +12,8 @@ const routes: Routes = [
         loadChildren: () => import('../meu-treino/meu-treino.module').then(m => m.MeuTreinoPageModule)
       },
       {
-        path: 'tab2',
-        loadChildren: () => import('../tab2/tab2.module').then(m => m.Tab2PageModule)
+        path: 'estatisticas',
+        loadChildren: () => import('../estatisticas/estatisticas.module').then(m => m.EstatisticasPageModule)
       },
       {
         path: 'perfil',

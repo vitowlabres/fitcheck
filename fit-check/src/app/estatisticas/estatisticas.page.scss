@@ -31,3 +31,10 @@ ion-checkbox::part(container) {
 ion-checkbox::part(mark) {
   display: none;
 }
+
+.barra-progresso {
+  --height: 24px; /* aumenta a altura da barra */
+  --border-radius: 12px; /* mantém cantos arredondados */
+  // --progress-background: green;
+}
+

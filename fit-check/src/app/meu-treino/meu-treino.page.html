@@ -14,6 +14,39 @@
 </ion-content>
 
 <ion-footer>
-  <ion-button expand="block" color="medium">Abrir treino salvo</ion-button>
+  <ion-button expand="block" color="medium" id="open-modal"
+    >Abrir treino salvo</ion-button
+  >
   <ion-button expand="block" color="success">Criar novo treino</ion-button>
 </ion-footer>
+
+<ion-modal trigger="open-modal" class="custom-modal">
+  <ng-template>
+    <ion-header class="header-modal">
+      <ion-toolbar class="toolbar-modal">
+        <ion-title>Escolher treino salvo</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-item>
+        <ion-label>Treino</ion-label>
+        <ion-select placeholder="Selecione um treino">
+          <ion-select-option value="treino1">Treino 1</ion-select-option>
+          <ion-select-option value="treino2">Treino 2</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-content>
+    <ion-footer class="footer-modal">
+      <ion-buttons>
+        <ion-button
+          class="button-fechar-modal"
+          id="close-modal"
+          onclick="document.querySelector('ion-modal').dismiss()"
+        >
+          Fechar
+        </ion-button>
+      </ion-buttons>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

@@ -6,6 +6,7 @@ id_treino
 nome_treino
 id_exercicio
 carga_meta
+series_meta
 repeticao_meta
 
 
@@ -26,5 +27,6 @@ repeticao_meta
 Exercícios
 id
 nome
+grupo_muscular
 
 

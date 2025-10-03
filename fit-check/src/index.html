@@ -17,10 +17,18 @@
   <!-- add to homescreen for ios -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <!-- 🚀 Configuração do caminho do wasm -->
+  <script>
+    if (typeof window !== "undefined") {
+      window.WASM_PATH = "assets";
+    }
+  </script>
 </head>
 
 <body>
   <app-root></app-root>
+  <jeep-sqlite></jeep-sqlite>
 </body>
 
 </html>

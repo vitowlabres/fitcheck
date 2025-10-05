@@ -37,17 +37,6 @@ export class DatabaseService {
     } catch (err) {
       console.error('[DB] Erro ao deletar banco:', err);
     }
-
-    // try {
-    //   console.log('[DB] Fechando conexão...');
-    //   await this.closeDatabase();
- 
-    //   console.log('[DB] Deletando banco...');
-    //   const result = await CapacitorSQLite.deleteDatabase({ database: 'fitcheckDB' });
-    //   console.log('[DB] Banco de dados deletado:', result);
-    // } catch (err) {
-    //   console.error('[DB] Erro ao deletar banco:', err);
-    // }
   }
 
   // Fecha a conexão com o banco.
@@ -138,9 +127,28 @@ export class DatabaseService {
       );
     `;
 
+    const createHistorico = `
+      CREATE TABLE IF NOT EXISTS historico (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_treino INTEGER NOT NULL,
+        id_exercicio INTEGER NOT NULL,
+        data TEXT NOT NULL,
+        dia_semana TEXT NOT NULL,
+        carga_feita INTEGER,
+        repeticao_feita INTEGER,
+        series_feito INTEGER,
+        carga_meta INTEGER,
+        repeticao_meta INTEGER,
+        series_meta INTEGER,
+        FOREIGN KEY (id_treino) REFERENCES treinos(id_treino),
+        FOREIGN KEY (id_exercicio) REFERENCES exercicios(id_exercicio)
+      );
+    `;
+
     await this.db.execute(createExercicios);
     await this.db.execute(createTreinos);
     await this.db.execute(crateTreino_exercicios);
+    await this.db.execute(createHistorico);
     console.log('[DB] Tabelas criadas ou já existiam');
   }
 
@@ -339,6 +347,47 @@ export class DatabaseService {
     );
 
     console.log(`[DB] Exercício ${id_exercicio} vinculado ao treino ${id_treino}`);
+  }
+
+  // Registra uma entrada no histórico de treinos
+  async registrarHistorico(
+    id_treino: number,
+    id_exercicio: number,
+    carga_feita: number,
+    repeticao_feita: number,
+    series_feito: number,
+    carga_meta: number,
+    repeticao_meta: number,
+    series_meta: number
+  ): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    // Data e dia da semana atuais
+    const data = new Date();
+    const dataStr = data.toISOString().split('T')[0]; // formato YYYY-MM-DD
+    const diaSemana = data.toLocaleDateString('pt-BR', { weekday: 'long' });
+
+    await this.db.run(
+      `INSERT INTO historico (
+        id_treino, id_exercicio, data, dia_semana,
+        carga_feita, repeticao_feita, series_feito,
+        carga_meta, repeticao_meta, series_meta
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id_treino,
+        id_exercicio,
+        dataStr,
+        diaSemana,
+        carga_feita,
+        repeticao_feita,
+        series_feito,
+        carga_meta,
+        repeticao_meta,
+        series_meta
+      ]
+    );
+
+    console.log(`[DB] Histórico registrado para treino ${id_treino}, exercício ${id_exercicio}`);
   }
 
 }

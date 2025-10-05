@@ -11,6 +11,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   constructor(private dbService: DatabaseService) {}
 
   async ngAfterViewInit() {
+    await this.dbService.deleteDatabase();
     await this.dbService.initializeDatabase();
   }
 

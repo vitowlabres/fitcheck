@@ -20,9 +20,45 @@ export class DatabaseService {
     });
   }
 
-  /**
-   * Inicializa o banco de dados e cria as tabelas, se necessário.
-   */
+  // Deleta o banco de dados
+  async deleteDatabase(): Promise<void> {
+
+    try {
+      const dbName = 'fitcheckDB';
+
+      // Cria conexão temporária se não existir
+      const conn = this.sqlite.createConnection('fitcheckDB', false, 'no-encryption', 1, false)
+      await this.closeDatabase();
+
+      // Agora deleta o banco
+      await this.sqlite.deleteOldDatabases();
+      const result = await CapacitorSQLite.deleteDatabase({ database: 'fitcheckDB' });
+      console.log('[DB] Banco de dados deletado:', result);
+    } catch (err) {
+      console.error('[DB] Erro ao deletar banco:', err);
+    }
+
+    // try {
+    //   console.log('[DB] Fechando conexão...');
+    //   await this.closeDatabase();
+ 
+    //   console.log('[DB] Deletando banco...');
+    //   const result = await CapacitorSQLite.deleteDatabase({ database: 'fitcheckDB' });
+    //   console.log('[DB] Banco de dados deletado:', result);
+    // } catch (err) {
+    //   console.error('[DB] Erro ao deletar banco:', err);
+    // }
+  }
+
+  // Fecha a conexão com o banco.
+  async closeDatabase(): Promise<void> {
+    if (this.db) {
+      await this.sqlite.closeConnection('appDB', false);
+      this.db = null;
+    }
+  }
+
+  // Inicializa o banco de dados, cria tabelas e popula com dados iniciais
   async initializeDatabase(): Promise<void> {
   console.log('[DB] Inicializando...');
 
@@ -36,7 +72,6 @@ export class DatabaseService {
     }
   }
 
-  console.log('[DB] após if linha 24...');
   try {
     let db: SQLiteDBConnection;
 
@@ -44,13 +79,11 @@ export class DatabaseService {
       const isConn = (await this.sqlite.isConnection('fitcheckDB', false)).result;
       if (isConn) {
         db = await this.sqlite.retrieveConnection('fitcheckDB', false);
-        console.log('[DB] if isConn...');
       } else {
         db = await this.sqlite.createConnection('fitcheckDB', false, 'no-encryption', 1, false);
-        console.log('[DB] Else isConn...');
       }
     } catch {
-      // fallback direto para criar conexão
+    // Criar conexão
       db = await this.sqlite.createConnection('fitcheckDB', false, 'no-encryption', 1, false);
       console.log('[DB] catch...');
     }
@@ -60,6 +93,7 @@ export class DatabaseService {
     console.log('[DB] Conexão aberta');
 
     await this.createTables();
+    await this.populateExercicios();
     await this.populateTreinos();
     this.readyResolver();
   } catch (err) {
@@ -67,14 +101,11 @@ export class DatabaseService {
   }
 }
 
-async ready(): Promise<void> {
-  return this.isReady;
-}
+  async ready(): Promise<void> {
+    return this.isReady;
+  }
 
-
-  /**
-   * Cria tabelas iniciais do banco.
-   */
+  // Cria as tabelas
   private async createTables(): Promise<void> {
     if (!this.db) throw new Error('DB não aberto');
     // tabela de exercícios
@@ -82,145 +113,233 @@ async ready(): Promise<void> {
         CREATE TABLE IF NOT EXISTS exercicios (
         id_exercicio INTEGER PRIMARY KEY AUTOINCREMENT,
         nome_exercicio TEXT NOT NULL,
-        grupo_muscular TEXT
+        grupo_muscular TEXT 
         );
     `;
 
+    
     const createTreinos = `
       CREATE TABLE IF NOT EXISTS treinos (
+        id_treino INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome_treino TEXT NOT NULL
+      );
+    `;
+
+    const crateTreino_exercicios = ` 
+      CREATE TABLE  IF NOT EXISTS treino_exercicios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         id_treino INTEGER NOT NULL,
-        nome_treino TEXT NOT NULL,
         id_exercicio INTEGER NOT NULL,
-        carga_meta INTEGER,
         series_meta INTEGER,
-        repeticao_meta INTEGER
+        repeticao_meta INTEGER,
+        carga_meta INTEGER,
+        FOREIGN KEY (id_treino) REFERENCES treinos(id_treino) ON DELETE CASCADE,
+        FOREIGN KEY (id_exercicio) REFERENCES exercicios(id_exercicio) ON DELETE CASCADE
       );
     `;
 
     await this.db.execute(createExercicios);
     await this.db.execute(createTreinos);
+    await this.db.execute(crateTreino_exercicios);
+    console.log('[DB] Tabelas criadas ou já existiam');
   }
 
-  /**
-   * Popula a tabela treinos com alguns exemplos
-   */
+  // Popula a tabela exercicios
+  private async populateExercicios(): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    const count = await this.db.query('SELECT COUNT(*) as total FROM exercicios');
+    if (count.values && count.values[0].total > 0) {
+      console.log('[DB] Tabela de exercícios já populada');
+      return;
+    }
+
+    const exercicios = [
+      { nome: 'cadeira extensora', grupo: 'Quadríceps' },
+      { nome: 'agachamento livre', grupo: 'Posterior de coxa' },
+      { nome: 'leg press', grupo: 'Quadríceps' },
+      { nome: 'hack machine', grupo: 'Quadríceps' },
+      { nome: 'mesa flexora', grupo: 'Posterior de coxa' },
+      { nome: 'bulgaro', grupo: 'Glúteos' },
+      { nome: 'remada baixa', grupo: 'Dorsal' },
+      { nome: 'barra fixa', grupo: 'Dorsal' },
+      { nome: 'serrote', grupo: 'Dorsal' },
+      { nome: 'remada curvada', grupo: 'Trapézio médio' },
+      { nome: 'puxada neutra', grupo: 'Dorsal' },
+      { nome: 'elevacao lateral', grupo: 'Deltoide lateral' },
+      { nome: 'desenvolvimento', grupo: 'Deltoide anterior' },
+      { nome: 'elevacao frontal', grupo: 'Deltoide anterior' },
+      { nome: 'crucifixo inverso', grupo: 'Deltoide posterior' },
+      { nome: 'cross polia baixa', grupo: 'Peitoral inferior' },
+      { nome: 'supino', grupo: 'Peitoral maior' },
+      { nome: 'supino h inclinado', grupo: 'Peitoral superior' },
+      { nome: 'push up', grupo: 'Peitoral maior' },
+      { nome: 'triceps corda', grupo: 'Tríceps braquial' },
+      { nome: 'triceps testa', grupo: 'Tríceps braquial' },
+      { nome: 'rosca alternada', grupo: 'Bíceps braquial' },
+      { nome: 'martelo', grupo: 'Braquiorradial' },
+      { nome: 'abdominal máquina', grupo: 'Reto abdominal' }
+    ];
+
+    for (const ex of exercicios) {
+      await this.db.run(
+        `INSERT INTO exercicios (nome_exercicio, grupo_muscular) VALUES (?, ?)`,
+        [ex.nome, ex.grupo]
+      );
+    }
+
+    console.log('[DB] Exercícios inseridos com sucesso:', exercicios.length);
+  }
+
+  // Popula a tabela treinos com alguns exemplos
   private async populateTreinos(): Promise<void> {
     if (!this.db) throw new Error('DB não aberto');
 
     const count = await this.db.query('SELECT COUNT(*) as total FROM treinos;');
     if (count.values && count.values[0].total > 0) {
-      return; // já populado
+      console.log('[DB] Tabela de treinos já populada');
+      return; 
     }
 
-    // popula exercícios primeiro
-    await this.db.run(`INSERT INTO exercicios (nome_exercicio, grupo_muscular) VALUES (?, ?)`, ["Leg Press", "Pernas"]);
-    await this.db.run(`INSERT INTO exercicios (nome_exercicio, grupo_muscular) VALUES (?, ?)`, ["Agachamento Livre", "Pernas"]);
-    await this.db.run(`INSERT INTO exercicios (nome_exercicio, grupo_muscular) VALUES (?, ?)`, ["Cadeira Extensora", "Pernas"]);
+    console.log('[DB] Inserindo treinos e vínculos...');
 
-     // pega IDs criados
-    const exercicios = await this.db.query('SELECT * FROM exercicios;');
+    //Inserir os treinos principais
+    const treinos = ['leg day', 'costas', 'ombro', 'peito', 'braco'];
+    for (const nome of treinos) {
+      await this.db.run(`INSERT INTO treinos (nome_treino) VALUES (?)`, [nome]);
+    }
+    
+    // Inserir os exercícios de cada treino
+    const treinoExercicios = [
+      // leg day
+      { id_treino: 1, id_exercicio: 1, series: 2, repeticoes: 50, carga: 25 },
+      { id_treino: 1, id_exercicio: 2, series: 5, repeticoes: 12, carga: 80 },
+      { id_treino: 1, id_exercicio: 3, series: 4, repeticoes: 15, carga: 250 },
+      { id_treino: 1, id_exercicio: 4, series: 5, repeticoes: 8, carga: 100 },
+      { id_treino: 1, id_exercicio: 5, series: 4, repeticoes: 20, carga: 50 },
+      { id_treino: 1, id_exercicio: 6, series: 4, repeticoes: 15, carga: 30 },
 
-    const sql = `
-      INSERT INTO treinos 
-        (id_treino, nome_treino, id_exercicio, carga_meta, series_meta, repeticao_meta) 
-      VALUES 
-        (?, ?, ?, ?, ?, ?);
-    `;
+      // costas
+      { id_treino: 2, id_exercicio: 7, series: 5, repeticoes: 10, carga: 50 },
+      { id_treino: 2, id_exercicio: 8, series: 4, repeticoes: 8, carga: 0 },
+      { id_treino: 2, id_exercicio: 9, series: 3, repeticoes: 10, carga: 40 },
+      { id_treino: 2, id_exercicio: 10, series: 3, repeticoes: 10, carga: 80 },
+      { id_treino: 2, id_exercicio: 11, series: 5, repeticoes: 10, carga: 60 },
 
-    const treinosExemplo = [
-      [1, 'Leg Press', exercicios.values![0].id_exercicio, 200, 4, 12],
-      [1, 'Agachamento Livre', exercicios.values![1].id_exercicio, 100, 4, 8],
-      [1, 'Cadeira Extensora', exercicios.values![2].id_exercicio, 80, 3, 10],
+      // ombro
+      { id_treino: 3, id_exercicio: 12, series: 4, repeticoes: 10, carga: 15 },
+      { id_treino: 3, id_exercicio: 13, series: 5, repeticoes: 10, carga: 20 },
+      { id_treino: 3, id_exercicio: 14, series: 4, repeticoes: 15, carga: 25 },
+      { id_treino: 3, id_exercicio: 15, series: 4, repeticoes: 20, carga: 80 },
+
+      // peito
+      { id_treino: 4, id_exercicio: 16, series: 5, repeticoes: 12, carga: 25 },
+      { id_treino: 4, id_exercicio: 17, series: 5, repeticoes: 8, carga: 60 },
+      { id_treino: 4, id_exercicio: 18, series: 5, repeticoes: 12, carga: 25 },
+      { id_treino: 4, id_exercicio: 19, series: 4, repeticoes: 10, carga: 0 },
+
+      // braço
+      { id_treino: 5, id_exercicio: 20, series: 3, repeticoes: 12, carga: 30 },
+      { id_treino: 5, id_exercicio: 22, series: 4, repeticoes: 8, carga: 17 },
+      { id_treino: 5, id_exercicio: 21, series: 3, repeticoes: 10, carga: 25 },
+      { id_treino: 5, id_exercicio: 23, series: 4, repeticoes: 12, carga: 12 },
+      { id_treino: 5, id_exercicio: 24, series: 3, repeticoes: 12, carga: 10 }
     ];
 
-    for (const treino of treinosExemplo) {
-      await this.db.run(sql, treino);
+    for (const te of treinoExercicios) {
+      await this.db.run(
+        `INSERT INTO treino_exercicios 
+          (id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta) 
+        VALUES (?, ?, ?, ?, ?)`,
+        [te.id_treino, te.id_exercicio, te.series, te.repeticoes, te.carga]
+      );
     }
   }
-
-  /**
-   * Busca todos os treinos
-   */
+  
+  // Retorna os nomes dos treinos
   async getTreinos(): Promise<string[]> {
     if (!this.db) throw new Error('DB não aberto');
 
-    const result = await this.db.query(
-      'SELECT nome_treino FROM treinos'
-    );
-
-    // retorna apenas uma lista de nomes
+    const result = await this.db.query('SELECT nome_treino FROM treinos ORDER BY id_treino');
     return result.values?.map((row: any) => row.nome_treino) || [];
   }
 
-  /**
-   * Adiciona um treino novo
-   */
-  async addTreino(
-    id_treino: number,
-    nome_treino: string,
-    id_exercicio: number,
-    carga_meta: number,
-    series_meta: number,
-    repeticao_meta: number
-  ): Promise<void> {
-    if (!this.db) throw new Error('DB não aberto');
-    const sql = `
-      INSERT INTO treinos 
-        (id_treino, nome_treino, id_exercicio, carga_meta, series_meta, repeticao_meta)
-      VALUES (?, ?, ?, ?, ?, ?);
-    `;
-    await this.db.run(sql, [
-      id_treino,
-      nome_treino,
-      id_exercicio,
-      carga_meta,
-      series_meta,
-      repeticao_meta,
-    ]);
-  }
-
-  /**
-   * Retorna o id_exercicio a partir do nome_exercicio
-   */
-  async getExercicioIdByNome(nome_exercicio: string): Promise<number | null> {
+  // Retorna o ID de um treino com base no nome
+  async getIdTreinoByNome(nome_treino: string): Promise<number | null> {
     if (!this.db) throw new Error('DB não aberto');
 
-    const res = await this.db.query(
-      'SELECT id_exercicio FROM exercicios WHERE nome_exercicio = ? LIMIT 1;',
-      [nome_exercicio]
+    const result = await this.db.query(
+      'SELECT id_treino FROM treinos WHERE nome_treino = ?',
+      [nome_treino]
     );
 
-    if (res.values && res.values.length > 0) {
-      return res.values[0].id_exercicio;
+    if (result.values && result.values.length > 0) {
+      return result.values[0].id_treino;
     }
-    return null; // não encontrado
+
+    console.warn('[DB] Nenhum treino encontrado com o nome:', nome_treino);
+    return null;
   }
 
-  /**
-   * Retorna todos os nomes de exercícios cadastrados
-   */
-  async getNomesExercicios(): Promise<string[]> {
+  // Retorna os exercícios vinculados a um treino específico
+  async getExerciciosPorTreino(id_treino: number): Promise<any[]> {
     if (!this.db) throw new Error('DB não aberto');
 
-    const res = await this.db.query('SELECT nome_exercicio FROM exercicios;');
+    const query = `
+      SELECT 
+        e.nome_exercicio, 
+        e.grupo_muscular,
+        te.series_meta, 
+        te.repeticao_meta, 
+        te.carga_meta
+      FROM treino_exercicios te
+      JOIN exercicios e ON te.id_exercicio = e.id_exercicio
+      WHERE te.id_treino = ?
+      ORDER BY e.nome_exercicio
+    `;
 
-    if (res.values) {
-      return res.values.map(row => row.nome_exercicio);
-    }
-    return [];
+    const result = await this.db.query(query, [id_treino]);
+    return result.values || [];
   }
 
-  /**
-   * Fecha a conexão com o banco.
-   */
-  async closeDatabase(): Promise<void> {
-    if (this.db) {
-      await this.sqlite.closeConnection('appDB', false);
-      this.db = null;
-    }
+  // Adiciona um novo treino e retorna seu ID
+  async addTreino(nome_treino: string): Promise<number> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    const result = await this.db.run(
+      `INSERT INTO treinos (nome_treino) VALUES (?)`,
+      [nome_treino]
+    );
+
+    console.log('[DB] Novo treino inserido:', nome_treino);
+
+    // Retorna o id_treino recém-criado
+    const idResult = await this.db.query('SELECT last_insert_rowid() as id_treino');
+    const id_treino = idResult.values?.[0]?.id_treino || null;
+
+    console.log('[DB] ID do treino criado:', id_treino);
+    return id_treino;
   }
 
+  // Adiciona um exercício a um treino específico
+  async addExercicioAoTreino(
+    id_treino: number,
+    id_exercicio: number,
+    series_meta: number,
+    repeticao_meta: number,
+    carga_meta: number
+  ): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    await this.db.run(
+      `INSERT INTO treino_exercicios 
+        (id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta) 
+      VALUES (?, ?, ?, ?, ?)`,
+      [id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta]
+    );
+
+    console.log(`[DB] Exercício ${id_exercicio} vinculado ao treino ${id_treino}`);
+  }
 
 }
 

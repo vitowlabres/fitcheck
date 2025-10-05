@@ -10,12 +10,18 @@ import { DatabaseService } from '../services/database.service';
 export class MeuTreinoPage {
 
   treinos: string[] = [];
+  exercicios: any[] = [];
 
   constructor(private dbService: DatabaseService) {}
 
   async ngOnInit() {
+    // Espera o serviço de banco de dados estar pronto
     await this.dbService.ready();
+
+    // Carrega os treinos do banco de dados
     await this.carregarTreinos();
+
+
   }
 
   async carregarTreinos() {
@@ -25,6 +31,23 @@ export class MeuTreinoPage {
       // aqui você pode passar `this.treinos` para o popup/modal
     } catch (err) {
       console.error('[DB] Erro ao buscar treinos:', err);
+    }
+  }
+
+  async selecionarTreino(nome_treino: string): Promise<void> {
+    try {
+      const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
+      if (!id_treino) {
+        console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
+        this.exercicios = [];
+        return;
+      }
+
+      this.exercicios = await this.dbService.getExerciciosPorTreino(id_treino);
+
+      console.log(`[DB] Exercícios do treino "${nome_treino}":`, this.exercicios);
+    } catch (err) {
+      console.error('[DB] Erro ao carregar exercícios:', err);
     }
   }
 

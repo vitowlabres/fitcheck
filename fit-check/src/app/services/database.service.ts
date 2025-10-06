@@ -266,59 +266,94 @@ export class DatabaseService {
   }
   
   // Popula a tabela historico com dados simulados
-  private async populateHistorico(): Promise<void> {
-    if (!this.db) throw new Error('DB não aberto');
+  private async populateHistorico() {
+    console.log('[DB] Populando tabela historico com dados aleatórios...');
 
-    console.log('[DB] Populando tabela historico...');
+    try {
+      const db = await this.sqlite.retrieveConnection('fitcheckDB', false);
+      if (!db) {
+        throw new Error('Conexão com o banco não encontrada.');
+      }
 
-    // Verifica se já há registros
-    const result = await this.db.query('SELECT COUNT(*) as total FROM historico');
-    const count = result.values?.[0]?.total || 0;
-    if (count > 0) {
-      console.log('[DB] Tabela historico já populada.');
-      return;
+      // Limpa dados anteriores (opcional)
+      await db.execute('DELETE FROM historico;');
+
+      const diasSemana = [
+        'domingo',
+        'segunda-feira',
+        'terça-feira',
+        'quarta-feira',
+        'quinta-feira',
+        'sexta-feira',
+        'sábado'
+      ];
+      const hoje = new Date();
+
+      // Busca todos os treinos
+      const resultTreinos = await db.query('SELECT id_treino FROM treinos;');
+
+      if (!resultTreinos.values || resultTreinos.values.length === 0) {
+        console.warn('[DB] Nenhum treino encontrado para popular histórico.');
+        return;
+      }
+
+      // Para cada treino, busca os exercícios e gera variações aleatórias
+      for (const treino of resultTreinos.values) {
+        const resultExercicios = await db.query(
+          'SELECT * FROM treino_exercicios WHERE id_treino = ?;',
+          [treino.id_treino]
+        );
+
+        if (!resultExercicios.values || resultExercicios.values.length === 0) continue;
+
+        const data = new Date(hoje);
+        data.setDate(hoje.getDate() - Math.floor(Math.random() * 7)); // data aleatória nos últimos 7 dias
+        const diaSemana = diasSemana[data.getDay()];
+
+        for (const ex of resultExercicios.values) {
+          const cargaMeta = ex.carga_meta ?? 0;
+          const repeticaoMeta = ex.repeticao_meta ?? 0;
+          const seriesMeta = ex.series_meta ?? 0;
+
+          // Gera valores feitos com variação de 70% a 110% da meta
+          const variacao = 0.7 + Math.random() * 0.4; // 70–110%
+          const cargaFeita = Math.round(cargaMeta * variacao);
+          const repeticaoFeita = Math.max(1, Math.round(repeticaoMeta * variacao));
+          const seriesFeito = Math.max(1, Math.round(seriesMeta * (0.8 + Math.random() * 0.3)));
+
+          await db.run(
+            `INSERT INTO historico (
+              id_treino,
+              id_exercicio,
+              data,
+              dia_semana,
+              carga_feita,
+              repeticao_feita,
+              carga_meta,
+              repeticao_meta,
+              series_feito,
+              series_meta
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              treino.id_treino,
+              ex.id_exercicio,
+              data.toISOString().split('T')[0],
+              diaSemana,
+              cargaFeita,
+              repeticaoFeita,
+              cargaMeta,
+              repeticaoMeta,
+              seriesFeito,
+              seriesMeta
+            ]
+          );
+        }
+      }
+
+      console.log('[DB] Histórico populado com sucesso (valores aleatórios aplicados).');
+    } catch (err) {
+      console.error('[DB] Erro ao popular histórico:', err);
     }
-
-    // Dados simulados
-    const historicos = [
-      // treino 1 (leg day)
-      { id_treino: 1, id_exercicio: 1, data: '2025-10-01', dia_semana: 'quarta-feira', carga_feita: 25, repeticao_feita: 50, series_feito: 2, carga_meta: 25, repeticao_meta: 50, series_meta: 2 },
-      { id_treino: 1, id_exercicio: 3, data: '2025-10-01', dia_semana: 'quarta-feira', carga_feita: 260, repeticao_feita: 15, series_feito: 4, carga_meta: 250, repeticao_meta: 15, series_meta: 4 },
-      { id_treino: 1, id_exercicio: 5, data: '2025-10-01', dia_semana: 'quarta-feira', carga_feita: 55, repeticao_feita: 20, series_feito: 4, carga_meta: 50, repeticao_meta: 20, series_meta: 4 },
-
-      // treino 2 (costas)
-      { id_treino: 2, id_exercicio: 7, data: '2025-10-02', dia_semana: 'quinta-feira', carga_feita: 55, repeticao_feita: 10, series_feito: 5, carga_meta: 50, repeticao_meta: 10, series_meta: 5 },
-      { id_treino: 2, id_exercicio: 9, data: '2025-10-02', dia_semana: 'quinta-feira', carga_feita: 45, repeticao_feita: 10, series_feito: 3, carga_meta: 40, repeticao_meta: 10, series_meta: 3 },
-
-      // treino 3 (ombro)
-      { id_treino: 3, id_exercicio: 12, data: '2025-10-03', dia_semana: 'sexta-feira', carga_feita: 20, repeticao_feita: 10, series_feito: 4, carga_meta: 15, repeticao_meta: 10, series_meta: 4 },
-      { id_treino: 3, id_exercicio: 15, data: '2025-10-03', dia_semana: 'sexta-feira', carga_feita: 85, repeticao_feita: 20, series_feito: 4, carga_meta: 80, repeticao_meta: 20, series_meta: 4 },
-
-      // treino 4 (peito)
-      { id_treino: 4, id_exercicio: 16, data: '2025-10-04', dia_semana: 'sábado', carga_feita: 25, repeticao_feita: 12, series_feito: 5, carga_meta: 25, repeticao_meta: 12, series_meta: 5 },
-      { id_treino: 4, id_exercicio: 17, data: '2025-10-04', dia_semana: 'sábado', carga_feita: 60, repeticao_feita: 8, series_feito: 5, carga_meta: 60, repeticao_meta: 8, series_meta: 5 },
-
-      // treino 5 (braço)
-      { id_treino: 5, id_exercicio: 20, data: '2025-10-05', dia_semana: 'domingo', carga_feita: 35, repeticao_feita: 12, series_feito: 3, carga_meta: 30, repeticao_meta: 12, series_meta: 3 },
-      { id_treino: 5, id_exercicio: 22, data: '2025-10-05', dia_semana: 'domingo', carga_feita: 20, repeticao_feita: 8, series_feito: 4, carga_meta: 17, repeticao_meta: 8, series_meta: 4 }
-    ];
-
-    for (const h of historicos) {
-      await this.db.run(
-        `INSERT INTO historico (
-          id_treino, id_exercicio, data, dia_semana,
-          carga_feita, repeticao_feita, series_feito,
-          carga_meta, repeticao_meta, series_meta
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          h.id_treino, h.id_exercicio, h.data, h.dia_semana,
-          h.carga_feita, h.repeticao_feita, h.series_feito,
-          h.carga_meta, h.repeticao_meta, h.series_meta
-        ]
-      );
-    }
-
-    console.log(`[DB] ${historicos.length} registros inseridos na tabela historico.`);
   }
 
   // Retorna os nomes dos treinos

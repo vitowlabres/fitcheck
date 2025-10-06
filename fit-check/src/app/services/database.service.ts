@@ -84,6 +84,7 @@ export class DatabaseService {
     await this.createTables();
     await this.populateExercicios();
     await this.populateTreinos();
+    await this.populateHistorico();
     this.readyResolver();
   } catch (err) {
     console.error('[DB] Erro ao inicializar:', err);
@@ -264,6 +265,62 @@ export class DatabaseService {
     }
   }
   
+  // Popula a tabela historico com dados simulados
+  private async populateHistorico(): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    console.log('[DB] Populando tabela historico...');
+
+    // Verifica se já há registros
+    const result = await this.db.query('SELECT COUNT(*) as total FROM historico');
+    const count = result.values?.[0]?.total || 0;
+    if (count > 0) {
+      console.log('[DB] Tabela historico já populada.');
+      return;
+    }
+
+    // Dados simulados
+    const historicos = [
+      // treino 1 (leg day)
+      { id_treino: 1, id_exercicio: 1, data: '2025-10-01', dia_semana: 'quarta-feira', carga_feita: 25, repeticao_feita: 50, series_feito: 2, carga_meta: 25, repeticao_meta: 50, series_meta: 2 },
+      { id_treino: 1, id_exercicio: 3, data: '2025-10-01', dia_semana: 'quarta-feira', carga_feita: 260, repeticao_feita: 15, series_feito: 4, carga_meta: 250, repeticao_meta: 15, series_meta: 4 },
+      { id_treino: 1, id_exercicio: 5, data: '2025-10-01', dia_semana: 'quarta-feira', carga_feita: 55, repeticao_feita: 20, series_feito: 4, carga_meta: 50, repeticao_meta: 20, series_meta: 4 },
+
+      // treino 2 (costas)
+      { id_treino: 2, id_exercicio: 7, data: '2025-10-02', dia_semana: 'quinta-feira', carga_feita: 55, repeticao_feita: 10, series_feito: 5, carga_meta: 50, repeticao_meta: 10, series_meta: 5 },
+      { id_treino: 2, id_exercicio: 9, data: '2025-10-02', dia_semana: 'quinta-feira', carga_feita: 45, repeticao_feita: 10, series_feito: 3, carga_meta: 40, repeticao_meta: 10, series_meta: 3 },
+
+      // treino 3 (ombro)
+      { id_treino: 3, id_exercicio: 12, data: '2025-10-03', dia_semana: 'sexta-feira', carga_feita: 20, repeticao_feita: 10, series_feito: 4, carga_meta: 15, repeticao_meta: 10, series_meta: 4 },
+      { id_treino: 3, id_exercicio: 15, data: '2025-10-03', dia_semana: 'sexta-feira', carga_feita: 85, repeticao_feita: 20, series_feito: 4, carga_meta: 80, repeticao_meta: 20, series_meta: 4 },
+
+      // treino 4 (peito)
+      { id_treino: 4, id_exercicio: 16, data: '2025-10-04', dia_semana: 'sábado', carga_feita: 25, repeticao_feita: 12, series_feito: 5, carga_meta: 25, repeticao_meta: 12, series_meta: 5 },
+      { id_treino: 4, id_exercicio: 17, data: '2025-10-04', dia_semana: 'sábado', carga_feita: 60, repeticao_feita: 8, series_feito: 5, carga_meta: 60, repeticao_meta: 8, series_meta: 5 },
+
+      // treino 5 (braço)
+      { id_treino: 5, id_exercicio: 20, data: '2025-10-05', dia_semana: 'domingo', carga_feita: 35, repeticao_feita: 12, series_feito: 3, carga_meta: 30, repeticao_meta: 12, series_meta: 3 },
+      { id_treino: 5, id_exercicio: 22, data: '2025-10-05', dia_semana: 'domingo', carga_feita: 20, repeticao_feita: 8, series_feito: 4, carga_meta: 17, repeticao_meta: 8, series_meta: 4 }
+    ];
+
+    for (const h of historicos) {
+      await this.db.run(
+        `INSERT INTO historico (
+          id_treino, id_exercicio, data, dia_semana,
+          carga_feita, repeticao_feita, series_feito,
+          carga_meta, repeticao_meta, series_meta
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          h.id_treino, h.id_exercicio, h.data, h.dia_semana,
+          h.carga_feita, h.repeticao_feita, h.series_feito,
+          h.carga_meta, h.repeticao_meta, h.series_meta
+        ]
+      );
+    }
+
+    console.log(`[DB] ${historicos.length} registros inseridos na tabela historico.`);
+  }
+
   // Retorna os nomes dos treinos
   async getTreinos(): Promise<string[]> {
     if (!this.db) throw new Error('DB não aberto');
@@ -388,6 +445,57 @@ export class DatabaseService {
     );
 
     console.log(`[DB] Histórico registrado para treino ${id_treino}, exercício ${id_exercicio}`);
+  }
+
+  // Obtém o último treino realizado em um dia da semana específico
+  async getUltimoTreinoPorDiaSemana(dia_semana: string): Promise<{ id_treino: number; data: string; nome_treino: string } | null> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    const query = `
+      SELECT 
+        h.id_treino,
+        t.nome_treino,
+        MAX(h.data) AS data
+      FROM historico h
+      JOIN treinos t ON h.id_treino = t.id_treino
+      WHERE h.dia_semana = ?
+      GROUP BY h.id_treino
+      ORDER BY data DESC
+      LIMIT 1;
+    `;
+
+    const result = await this.db.query(query, [dia_semana]);
+    if (result.values && result.values.length > 0) {
+      return result.values[0];
+    }
+
+    console.warn(`[DB] Nenhum treino encontrado para ${dia_semana}`);
+    return null;
+  }
+
+  async getExerciciosPorTreinoHistorico(id_treino: number): Promise<any[]> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    const query = `
+      SELECT 
+        e.nome_exercicio,
+        e.grupo_muscular,
+        h.series_feito,
+        h.series_meta,
+        h.repeticao_feita,
+        h.repeticao_meta,
+        h.carga_feita,
+        h.carga_meta,
+        h.data,
+        h.dia_semana
+      FROM historico h
+      JOIN exercicios e ON h.id_exercicio = e.id_exercicio
+      WHERE h.id_treino = ?
+      ORDER BY e.nome_exercicio ASC;
+    `;
+
+    const result = await this.db.query(query, [id_treino]);
+    return result.values || [];
   }
 
 }

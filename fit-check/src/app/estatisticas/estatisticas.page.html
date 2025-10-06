@@ -8,37 +8,42 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list value="op1">
-    <div class="checkbox-row">
-      <ion-checkbox value="op1" label-placement="stacked" color="success"
-        >Seg</ion-checkbox
-      >
-      <ion-checkbox value="op2" label-placement="stacked" color="success"
-        >Ter</ion-checkbox
-      >
-      <ion-checkbox value="op3" label-placement="stacked" color="danger"
-        >Qua</ion-checkbox
-      >
-      <ion-checkbox value="op4" label-placement="stacked" color="success"
-        >Qui</ion-checkbox
-      >
-      <ion-checkbox value="op5" label-placement="stacked" color="warning"
-        >Sex</ion-checkbox
-      >
-      <ion-checkbox value="op6" label-placement="stacked" color="success"
-        >Sab</ion-checkbox
-      >
-      <ion-checkbox value="op7" label-placement="stacked" color="danger"
-        >Dom</ion-checkbox
-      >
-    </div>
-  </ion-list>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Progresso</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-progress-bar class="barra-progresso" value="0.7" color="primary"></ion-progress-bar>
-    </ion-card-content>
-  </ion-card>
+  <!--  Botões dos dias da semana -->
+  <div class="dias-semana">
+    <ion-button 
+      *ngFor="let dia of diasSemana"
+      [color]="getCorDoDia(dia)"
+      (click)="selecionarDia(dia)">
+      {{ dia | slice:0:3 | titlecase }}
+    </ion-button>
+  </div>
+
+  <!--  Barra de progresso geral -->
+  <div *ngIf="treinoSelecionado">
+    <ion-item lines="none">
+      <ion-label>
+        <h2>{{ treinoSelecionado.nome_treino }}</h2>
+        <p>{{ treinoSelecionado.data | date:'dd/MM/yyyy' }} — {{ treinoSelecionado.dia_semana }}</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-progress-bar [value]="progressoGeral / 100" color="success"></ion-progress-bar>
+    <p class="percentual">{{ progressoGeral | number:'1.0-0' }}%</p>
+  </div>
+
+  <!-- Gráfico de barras “feito vs meta” -->
+  <div class="grafico-container">
+    <canvas id="graficoTreino"></canvas>
+  </div>
+
+  <!--  Lista de exercícios (após escolher o dia) -->
+  <ion-item *ngIf="exercicios.length > 0">
+    <ion-label>Selecione um exercício</ion-label>
+    <ion-select (ionChange)="selecionarExercicio($event.detail.value)">
+      <ion-select-option *ngFor="let ex of exercicios" [value]="ex">
+        {{ ex.nome_exercicio }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
 </ion-content>

@@ -1,0 +1,50 @@
+ion-modal.custom-modal {
+  --width: 90%;         
+  --max-width: 400px;   
+  --height: 40%;       
+  --border-radius: 16px;
+  --border-radius: 16px;      
+  --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
+  --color: #000;              
+
+  
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-modal {
+  display: flex;
+  justify-content: center; 
+  align-items: center;     
+  padding: 12px 0;
+}
+
+.button-fechar-modal {
+  --color: var(--ion-color-medium); 
+    width: 100%;
+  justify-content: center;
+}
+.button-fechar-modal:hover {
+  --background: var(--ion-color-light); 
+}
+
+
+.toolbar-modal {
+  --justify-content: center; 
+}
+
+.toolbar-modal ion-title {
+  text-align: center;
+  width: 100%; 
+}
+
+.item-treino {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+}
+
+.treino-text {
+  font-size: 1rem;
+  font-weight: 500;
+}

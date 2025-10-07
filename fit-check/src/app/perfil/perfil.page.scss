@@ -33,13 +33,25 @@ ion-card-subtitle {
   overflow: hidden; 
 }
 
+.avatar-photo {
+  width: 60%;
+  height: 60%;
+  object-fit: cover;           /* Preenche o card mantendo proporção */
+}
+
 .avatar {
-  width: 150px;           
+  width: 150px;
   height: 150px;
   border-radius: 50%;
-  object-fit: cover; 
-  margin: 5px    
+  display: flex;               /* Torna o card um container flex */
+  justify-content: center;     /* Centraliza horizontalmente */
+  align-items: center;         /* Centraliza verticalmente */
+  margin: 5px auto;            /* Centraliza o card na tela se quiser */
+  overflow: hidden;            /* Garante que a imagem não ultrapasse o círculo */
 }
+
+
+
 
 .user-info { 
   box-shadow: none;

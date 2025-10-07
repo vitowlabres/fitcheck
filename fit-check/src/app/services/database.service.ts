@@ -421,6 +421,13 @@ export class DatabaseService {
     return id_treino;
   }
 
+  // Deleta um treino e todos os vínculos associados
+  async deletarTreino(id_treino: number): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+    await this.db.run('DELETE FROM treinos WHERE id_treino = ?', [id_treino]);
+    console.log('[DB] Treino deletado, ID:', id_treino);
+  }
+  
   // Adiciona um exercício a um treino específico
   async addExercicioAoTreino(
     id_treino: number,

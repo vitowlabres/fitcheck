@@ -25,15 +25,18 @@ export class PopUpTreinosComponent {
   }
 
   async deletarTreino(nome_treino: string) {
-    try {
-      const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
-      if (!id_treino) return;
+        try {
+        const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
+        if (!id_treino) {
+            console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
+            return;
+            }
+            
+        await this.dbService.deletarTreino(id_treino);
+        this.treinos = this.treinos.filter(t => t !== nome_treino);
 
-      await this.dbService.deletarTreino(id_treino);
-      this.treinos = this.treinos.filter(t => t !== nome_treino);
-
-    } catch (err) {
-      console.error('[DB] Erro ao deletar treino:', err);
+        } catch (err) {
+        console.error('[DB] Erro ao deletar treino:', err);
+        }
     }
-  }
 }

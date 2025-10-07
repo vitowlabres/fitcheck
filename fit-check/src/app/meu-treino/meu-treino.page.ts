@@ -20,12 +20,11 @@ export class MeuTreinoPage {
 
     // Carrega os treinos do banco de dados
     await this.carregarTreinos();
-
-
   }
 
   async carregarTreinos() {
     try {
+      console.log('[DB] Carregando treinos...');
       this.treinos = await this.dbService.getTreinos();
       console.log('[DB] Treinos carregados:', this.treinos);
       // aqui você pode passar `this.treinos` para o popup/modal
@@ -33,6 +32,7 @@ export class MeuTreinoPage {
       console.error('[DB] Erro ao buscar treinos:', err);
     }
   }
+  
 
   async selecionarTreino(nome_treino: string): Promise<void> {
     try {
@@ -51,4 +51,20 @@ export class MeuTreinoPage {
     }
   }
 
+  async deletarTreino(nome_treino: string): Promise<void> {
+    try {
+      const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
+      if (!id_treino) {
+        console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
+        return;
+      }
+
+      await this.dbService.deletarTreino(id_treino);
+      await this.carregarTreinos();
+      
+      console.log(`[DB] Treino "${nome_treino}" deletado.`);
+    } catch (err) {
+      console.error('[DB] Erro ao deletar treino:', err);
+    }
+  }
 }

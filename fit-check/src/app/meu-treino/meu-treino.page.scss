@@ -18,25 +18,25 @@ ion-title {
 
 .footer-buttons {
   display: flex;
-  flex-direction: column;     /* Um em cima do outro */
-  align-items: flex-end;      /* Alinha na direita */
-  padding: 16px;              /* Espaçamento interno opcional */
-  gap: 12px;                  /* Espaço entre os botões */
+  flex-direction: column;     
+  align-items: flex-end;      
+  padding: 16px;              
+  gap: 12px;                  
 }
 
 .round-btn {
   --border-radius: 50%;
-  width: 60px;                /* Define tamanho fixo */
+  width: 60px;                
   height: 60px;
-  min-width: 60px;            /* Impede que o Ionic force outro tamanho */
+  min-width: 60px;            
   display: flex;
-  justify-content: center;    /* Centraliza o ícone */
+  justify-content: center;    
   align-items: center;
   padding: 0;
 }
 
 .round-btn img {
-  width: 28px;                /* Tamanho do ícone dentro do botão */
+  width: 28px;                
   height: 28px;
 }
 
@@ -88,4 +88,26 @@ ion-modal.custom-modal {
 .toolbar-modal ion-title {
   text-align: center;
   width: 100%; 
+}
+
+.item-treino {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+}
+
+.treino-text {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.button-treino {
+  --background: transparent; 
+  --border-radius: 50%;      
+  padding: 4px;               
+}
+
+.button-treino img {
+  width: 24px;
+  height: 24px;
 }

@@ -1,1 +1,26 @@
-**/fit-check/android
+
+# Build e dependências
+/fit-check/node_modules/
+/fit-check/www/
+/fit-check/dist/
+/fit-check/build/
+/fit-check/coverage/
+
+# Capacitor (nativo)
+#/fit-check/ios/
+ /fit-check/android/
+
+# Configurações locais
+/fit-check/.env
+/fit-check/.env.*
+/fit-check/*.local
+
+# Logs e temporários
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/fit-check/.idea/
+/fit-check/.vscode/
+/fit-check/*.iml
+.DS_Store
+Thumbs.db

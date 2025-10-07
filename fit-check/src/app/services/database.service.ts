@@ -146,10 +146,22 @@ export class DatabaseService {
       );
     `;
 
+    const createTreinador = `
+      CREATE TABLE IF NOT EXISTS treinador (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        telefone TEXT,
+        email TEXT,
+        cidade TEXT,
+        UF TEXT
+      );
+    `;
+
     await this.db.execute(createExercicios);
     await this.db.execute(createTreinos);
     await this.db.execute(crateTreino_exercicios);
     await this.db.execute(createHistorico);
+    await this.db.execute(createTreinador);
     console.log('[DB] Tabelas criadas ou já existiam');
   }
 

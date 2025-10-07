@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { DatabaseService } from '../services/database.service';
+import { ModalController } from '@ionic/angular';
+import { PopUpTreinosComponent } from '../pop-up-treinos/pop-up-treinos.component';
 
 @Component({
   selector: 'app-meu-treino',
@@ -12,7 +14,9 @@ export class MeuTreinoPage {
   treinos: string[] = [];
   exercicios: any[] = [];
 
-  constructor(private dbService: DatabaseService) {}
+  constructor(
+    private dbService: DatabaseService,
+    private modalCtrl: ModalController) { }
 
   async ngOnInit() {
     // Espera o serviço de banco de dados estar pronto
@@ -61,10 +65,19 @@ export class MeuTreinoPage {
 
       await this.dbService.deletarTreino(id_treino);
       await this.carregarTreinos();
-      
+
       console.log(`[DB] Treino "${nome_treino}" deletado.`);
     } catch (err) {
       console.error('[DB] Erro ao deletar treino:', err);
     }
   }
+
+  async abrirModal() {
+  const modal = await this.modalCtrl.create({
+    component: PopUpTreinosComponent,
+    componentProps: { treinos: this.treinos },
+    cssClass: 'pop-up-treinos-modal',
+  });
+  await modal.present();
+}
 }

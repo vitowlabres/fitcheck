@@ -14,7 +14,11 @@
 </ion-content>
 
 <ion-footer class="footer-buttons">
-  <ion-button class="round-btn" color="medium" id="open-modal"
+  <ion-button
+    class="round-btn"
+    color="medium"
+    id="open-modal"
+    (click)="abrirModal()"
     ><img src="../../assets/icon/icon-list.png" alt="Escolher treino salvo"
   /></ion-button>
   <ion-button class="round-btn" color="success"
@@ -22,9 +26,9 @@
   /></ion-button>
 </ion-footer>
 
-<ion-modal trigger="open-modal" class="custom-modal">
-  <ng-template>
-    <ion-header class="header-modal">
+<!-- <ion-modal trigger="open-modal" class="custom-modal"> -->
+<!-- <ng-template> -->
+<!-- <ion-header class="header-modal">
       <ion-toolbar class="toolbar-modal">
         <ion-title>Escolher treino salvo</ion-title>
       </ion-toolbar>
@@ -65,6 +69,6 @@
           Fechar
         </ion-button>
       </ion-buttons>
-    </ion-footer>
-  </ng-template>
-</ion-modal>
+    </ion-footer> -->
+<!-- </ng-template> -->
+<!-- </ion-modal> -->

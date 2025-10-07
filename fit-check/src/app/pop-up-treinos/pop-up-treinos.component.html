@@ -1,0 +1,35 @@
+<ion-header class="header-modal">
+  <ion-toolbar class="toolbar-modal">
+    <ion-title>Escolher treino salvo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item *ngFor="let treino of treinos" class="item-treino">
+      <ion-label class="treino-text">{{ treino }}</ion-label>
+      <ion-buttons slot="end">
+        <ion-button
+          fill="clear"
+          class="button-treino button-deletar-treino"
+          (click)="deletarTreino(treino)"
+        >
+          <img src="../../assets/icon/icon-trash.png" alt="Deletar treino" />
+        </ion-button>
+        <ion-button fill="clear" class="button-treino">
+          <img
+            src="../../assets/icon/icon-select.png"
+            alt="Selecionar treino"
+          />
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+</ion-content>
+<ion-footer class="footer-modal">
+  <ion-buttons>
+    <ion-button class="button-fechar-modal" id="close-modal" (click)="fechar()">
+      Fechar
+    </ion-button>
+  </ion-buttons>
+</ion-footer>

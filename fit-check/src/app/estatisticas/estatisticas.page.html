@@ -37,7 +37,7 @@
     <ion-label>Selecione um exercício</ion-label>
     <ion-select (ionChange)="selecionarExercicio($event.detail.value)">
       <ion-select-option *ngFor="let ex of exercicios" [value]="ex">
-        {{ ex.nome_exercicio }}
+        {{ ex.nome }}
       </ion-select-option>
     </ion-select>
   </ion-item>
@@ -46,6 +46,11 @@
   <div *ngIf="nomeTreino">
     <ion-progress-bar [value]="progressoGeral / 100" color="success"></ion-progress-bar>
     <p class="percentual">{{ progressoGeral | number:'1.0-0' }}%</p>
+  </div>
+
+  <!-- Gráfico de linha “evolução de carga” -->
+  <div class="grafico-container" *ngIf="graficoEvolucao">
+    <canvas id="graficoEvolucaoCarga"></canvas>
   </div>
 
 </ion-content>

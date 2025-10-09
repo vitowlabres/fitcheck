@@ -626,4 +626,24 @@ export class DatabaseService {
     return result.values || [];
   }
 
+  async getEvolucaoCargaPorTreino(id_treino: number) {
+    if (!this.db) throw new Error('DB não aberto');
+    
+    const query = `
+      SELECT 
+        h.data,
+        e.nome_exercicio,
+        AVG(h.carga_feita) AS carga_media
+      FROM historico h
+      JOIN exercicios e ON e.id = h.id_exercicio
+      WHERE h.id_treino = ?
+      GROUP BY h.data, e.nome_exercicio
+      ORDER BY h.data ASC;
+    `;
+
+    const result = await this.db.query(query, [id_treino]);
+    return result.values || [];
+  }
+
+
 }

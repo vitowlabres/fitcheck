@@ -1,8 +1,8 @@
 import { Component, OnInit  } from '@angular/core';
 import { DatabaseService } from '../services/database.service';
-import { Chart, BarController, BarElement, CategoryScale, LinearScale, Legend, Tooltip } from 'chart.js';
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Legend, Tooltip, registerables  } from 'chart.js';
 
-Chart.register(BarController, BarElement, CategoryScale, LinearScale, Legend, Tooltip);
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Legend, Tooltip, ...registerables);
 
 @Component({
   selector: 'app-estatisticas',
@@ -30,6 +30,7 @@ export class EstatisticasPage implements OnInit {
   nomeTreino: string = ''
   ultimaData: string = '';
   progressValue: number = 0; // valor de progresso entre 0 e 1
+  graficoEvolucao: any = null;
 
 
   constructor(private dbService: DatabaseService) {}
@@ -83,7 +84,8 @@ export class EstatisticasPage implements OnInit {
 
     const treino = await this.dbService.getUltimoTreinoPorDiaSemana(dia);
     const cor = this.getCorDoDia(dia);
-
+    this.treinoSelecionado = treino;
+    
     if (!treino || cor === 'medium') {
       console.warn('[UI] Nenhum treino encontrado para o dia:', dia);
       this.nomeTreino = '';
@@ -109,9 +111,9 @@ export class EstatisticasPage implements OnInit {
 
 
   // Exemplo: exibir gráfico ao escolher exercício
-  selecionarExercicio(exercicio: any) {
-    console.log('Exercício selecionado:', exercicio);
-    // aqui entra o Chart.js futuramente
+  async selecionarExercicio(exercicio: any) {
+    console.log('[TS] Exercício selecionado:', exercicio);
+    await this.criarGraficoEvolucaoCarga(exercicio);
   }
 
   destruirGrafico() {
@@ -180,5 +182,66 @@ export class EstatisticasPage implements OnInit {
       },
     });
   }
+
+  async criarGraficoEvolucaoCarga(exercicio: any) {
+    if (!this.treinoSelecionado || !exercicio) return;
+    
+    // Obtém os dados de evolução da carga
+    const dados = await this.dbService.getEvolucaoCargaPorTreino(this.treinoSelecionado.id_treino);
+
+    // Filtra apenas os registros do exercício selecionado
+    const dadosFiltrados = dados.filter((d: any) => d.nome_exercicio === exercicio.nome);
+
+    if (dadosFiltrados.length === 0) {
+      console.warn('[TS] Sem dados de evolução para este exercício.');
+      if (this.graficoEvolucao) {
+        this.graficoEvolucao.destroy();
+        this.graficoEvolucao = null;
+      }
+      return;
+    }
+
+    const labels = dadosFiltrados.map((d: any) => d.data);
+    const valores = dadosFiltrados.map((d: any) => d.carga_media);
+
+    // Destroi gráfico antigo se existir
+    if (this.graficoEvolucao) {
+      this.graficoEvolucao.destroy();
+    }
+
+    const canvas = document.getElementById('graficoEvolucaoCarga') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    this.graficoEvolucao = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: `Evolução de carga - ${exercicio.nome}`,
+            data: valores,
+            borderColor: 'rgba(54,162,235,0.9)',
+            backgroundColor: 'rgba(54,162,235,0.3)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' },
+        },
+        scales: {
+          y: { beginAtZero: true },
+        },
+      },
+    });
+  }
+
 
 }

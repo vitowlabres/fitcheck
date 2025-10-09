@@ -26,6 +26,11 @@ export class EstatisticasPage implements OnInit {
   exercicios: any[] = [];
   progressoGeral: number = 0;
   grafico: Chart | null = null;
+  diaSelecionado: string = '';
+  nomeTreino: string = ''
+  ultimaData: string = '';
+  progressValue: number = 0; // valor de progresso entre 0 e 1
+
 
   constructor(private dbService: DatabaseService) {}
 
@@ -34,54 +39,74 @@ export class EstatisticasPage implements OnInit {
     await this.atualizarCoresDias();
   }
   
-  // Atualiza cor dos botões de acordo com o desempenho
   async atualizarCoresDias() {
+    console.log('[UI] Atualizando cores dos dias...');
+    this.coresDias = {}; // reinicia o mapa de cores
+
     for (const dia of this.diasSemana) {
       const treino = await this.dbService.getUltimoTreinoPorDiaSemana(dia);
-      if (treino) {
-        const exercicios = await this.dbService.getExerciciosPorTreinoHistorico(treino.id_treino);
-        const metaTotal = exercicios.reduce((acc, e) => acc + (e.carga_meta || 0), 0);
-        const feitoTotal = exercicios.reduce((acc, e) => acc + (e.carga_feita || 0), 0);
-        const perc = metaTotal > 0 ? (feitoTotal / metaTotal) * 100 : 0;
 
-        // define a cor conforme desempenho
-        if (perc >= 90) this.coresDias[dia] = 'success';   // verde
-        else if (perc >= 60) this.coresDias[dia] = 'warning'; // amarelo
-        else this.coresDias[dia] = 'danger';                 // vermelho
-      } else {
-        this.coresDias[dia] = 'medium'; // cinza (sem treino)
+      if (!treino || !treino.exercicios || treino.exercicios.length === 0) {
+        // sem treino nesse dia
+        this.coresDias[dia] = 'medium'; // cinza
+        continue;
       }
+
+      const metaTotal = treino.exercicios.reduce(
+        (acc, e) => acc + (e.carga_meta ?? 0) * (e.series_meta ?? 1),
+        0
+      );
+      const feitoTotal = treino.exercicios.reduce(
+        (acc, e) => acc + (e.carga_feita ?? 0) * (e.series_feito ?? 1),
+        0
+      );
+
+      const perc = metaTotal > 0 ? (feitoTotal / metaTotal) * 100 : 0;
+
+      if (perc >= 90) this.coresDias[dia] = 'success'; // verde
+      else if (perc >= 60) this.coresDias[dia] = 'warning'; // amarelo
+      else this.coresDias[dia] = 'danger'; // vermelho
     }
+
+    console.log('[UI] Cores dos dias atualizadas:', this.coresDias);
   }
+
 
   // Cor dinâmica para cada botão
   getCorDoDia(dia: string): string {
     return this.coresDias[dia] || 'medium';
   }
 
-  // Seleciona um dia e carrega dados correspondentes
   async selecionarDia(dia: string) {
+    console.log('[UI] Dia selecionado:', dia);
+    this.diaSelecionado = dia;
+
     const treino = await this.dbService.getUltimoTreinoPorDiaSemana(dia);
-    if (!treino) {
-      console.warn(`[DB] Nenhum treino encontrado para ${dia}`);
-      this.treinoSelecionado = null;
+    const cor = this.getCorDoDia(dia);
+
+    if (!treino || cor === 'medium') {
+      console.warn('[UI] Nenhum treino encontrado para o dia:', dia);
+      this.nomeTreino = '';
+      this.ultimaData = '';
       this.exercicios = [];
       this.progressoGeral = 0;
-      this.destruirGrafico();
+      this.criarGraficoTreino([]);
       return;
     }
 
-    this.treinoSelecionado = treino;
-    this.exercicios = await this.dbService.getExerciciosPorTreinoHistorico(treino.id_treino);
+    this.nomeTreino = treino.nome_treino;
+    this.ultimaData = treino.ultima_data;
+    this.exercicios = treino.exercicios;
 
     const metaTotal = this.exercicios.reduce((acc, e) => acc + (e.carga_meta || 0), 0);
     const feitoTotal = this.exercicios.reduce((acc, e) => acc + (e.carga_feita || 0), 0);
     this.progressoGeral = metaTotal > 0 ? (feitoTotal / metaTotal) * 100 : 0;
 
-    setTimeout(() => {
-      this.criarGraficoTreino();
-    }, 100);
+    console.log('[UI] Progresso atualizado:', this.progressoGeral);
+
+    this.criarGraficoTreino(this.exercicios);
   }
+
 
   // Exemplo: exibir gráfico ao escolher exercício
   selecionarExercicio(exercicio: any) {
@@ -96,45 +121,64 @@ export class EstatisticasPage implements OnInit {
     }
   }
 
-  criarGraficoTreino() {
-    
-    this.destruirGrafico();
-    if (!this.exercicios.length) return;
+  criarGraficoTreino(exercicios: any[] = this.exercicios) {
+    if (!exercicios || exercicios.length === 0) {
+      if (this.grafico) {
+        this.grafico.destroy();
+        this.grafico = null;
+      }
+      return;
+    }
 
-    const nomes = this.exercicios.map(e => e.nome_exercicio);
-    const feitos = this.exercicios.map(e => e.carga_feita);
-    const metas = this.exercicios.map(e => e.carga_meta);
+    const labels = exercicios.map(e => e.nome);
+    const feitos = exercicios.map(e => e.repeticao_feita ?? 0);
+    const metas = exercicios.map(e => e.repeticao_meta ?? 0);
 
-    const ctx = document.getElementById('graficoTreino') as HTMLCanvasElement;
+    const data = {
+      labels,
+      datasets: [
+        {
+          label: 'Feito (rep)',
+          data: feitos,
+          backgroundColor: 'rgba(54,162,235,0.8)',
+        },
+        {
+          label: 'Meta (rep)',
+          data: metas,
+          backgroundColor: 'rgba(255,99,132,0.6)',
+        },
+      ],
+    };
+
+    // Destroi gráfico anterior se já existir
+    if (this.grafico) {
+      this.grafico.destroy();
+    }
+
+    const canvas = document.getElementById('graficoTreino') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
     this.grafico = new Chart(ctx, {
       type: 'bar',
-      data: {
-        labels: nomes,
-        datasets: [
-          {
-            label: 'Feito (kg)',
-            data: feitos,
-            backgroundColor: 'rgba(54, 162, 235, 0.8)',
-          },
-          {
-            label: 'Meta (kg)',
-            data: metas,
-            backgroundColor: 'rgba(255, 99, 132, 0.6)',
-          }
-        ]
-      },
+      data,
       options: {
         responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          tooltip: { enabled: true }
-        },
+        maintainAspectRatio: false,
         scales: {
-          x: { grid: { display: false }, ticks: { font: { size: 10 } } },
-          y: { beginAtZero: true }
-        }
-      }
+          y: {
+            beginAtZero: true,
+          },
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+        },
+      },
     });
   }
+
 }

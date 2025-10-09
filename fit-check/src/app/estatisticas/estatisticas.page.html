@@ -18,17 +18,13 @@
     </ion-button>
   </div>
 
-  <!--  Barra de progresso geral -->
   <div *ngIf="treinoSelecionado">
     <ion-item lines="none">
       <ion-label>
         <h2>{{ treinoSelecionado.nome_treino }}</h2>
-        <p>{{ treinoSelecionado.data | date:'dd/MM/yyyy' }} — {{ treinoSelecionado.dia_semana }}</p>
+        <p>{{ treinoSelecionado.ultima_data  | date:'dd/MM/yyyy' }} — {{ treinoSelecionado.dia_semana }}</p>
       </ion-label>
     </ion-item>
-
-    <ion-progress-bar [value]="progressoGeral / 100" color="success"></ion-progress-bar>
-    <p class="percentual">{{ progressoGeral | number:'1.0-0' }}%</p>
   </div>
 
   <!-- Gráfico de barras “feito vs meta” -->
@@ -45,5 +41,11 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
+
+  <!--  Barra de progresso geral -->
+  <div *ngIf="nomeTreino">
+    <ion-progress-bar [value]="progressoGeral / 100" color="success"></ion-progress-bar>
+    <p class="percentual">{{ progressoGeral | number:'1.0-0' }}%</p>
+  </div>
 
 </ion-content>

@@ -111,7 +111,8 @@ export class DatabaseService {
     const createTreinos = `
       CREATE TABLE IF NOT EXISTS treinos (
         id_treino INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome_treino TEXT NOT NULL
+        nome_treino TEXT NOT NULL,
+        ativo INTEGER NOT NULL DEFAULT 1
       );
     `;
 
@@ -360,7 +361,7 @@ export class DatabaseService {
   async getTreinos(): Promise<string[]> {
     if (!this.db) throw new Error('DB não aberto');
 
-    const result = await this.db.query('SELECT nome_treino FROM treinos ORDER BY id_treino');
+    const result = await this.db.query('SELECT nome_treino FROM treinos WHERE enable = 1 ORDER BY id_treino');
     return result.values?.map((row: any) => row.nome_treino) || [];
   }
 
@@ -421,11 +422,16 @@ export class DatabaseService {
     return id_treino;
   }
 
-  // Deleta um treino e todos os vínculos associados
-  async deletarTreino(id_treino: number): Promise<void> {
-    if (!this.db) throw new Error('DB não aberto');
-    await this.db.run('DELETE FROM treinos WHERE id_treino = ?', [id_treino]);
-    console.log('[DB] Treino deletado, ID:', id_treino);
+  // Desabilita um treino e todos os vínculos associados
+  async desabilitarTreino(id_treino: number): Promise<void> {
+  if (!this.db) throw new Error('DB não aberto');
+
+  await this.db.run(
+    'UPDATE treinos SET enable = 0 WHERE id_treino = ?',
+    [id_treino]
+  );
+
+  console.log('[DB] Treino desabilitado (soft delete), ID:', id_treino);
   }
   
   // Adiciona um exercício a um treino específico

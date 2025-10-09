@@ -24,19 +24,20 @@ export class PopUpTreinosComponent {
     this.modalCtrl.dismiss();
   }
 
-  async deletarTreino(nome_treino: string) {
-        try {
-        const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
-        if (!id_treino) {
-            console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
-            return;
-            }
-            
-        await this.dbService.deletarTreino(id_treino);
-        this.treinos = this.treinos.filter(t => t !== nome_treino);
-
-        } catch (err) {
-        console.error('[DB] Erro ao deletar treino:', err);
-        }
+  async desabilitarTreino(nome_treino: string) {
+       await this.dbService.ready();
+  try {
+    const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
+    if (!id_treino) {
+      console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
+      return;
     }
+
+    await this.dbService.desabilitarTreino(id_treino);
+    this.treinos = this.treinos.filter(t => t !== nome_treino);
+
+  } catch (err) {
+    console.error('[DB] Erro ao desabilitar treino:', err);
+  }
+}
 }

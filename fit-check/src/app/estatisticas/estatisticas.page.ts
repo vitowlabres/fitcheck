@@ -32,11 +32,10 @@ export class EstatisticasPage implements OnInit {
   progressValue: number = 0; // valor de progresso entre 0 e 1
   graficoEvolucao: any = null;
 
-
   constructor(private dbService: DatabaseService) {}
 
   async ngOnInit() {
-    console.log('Página carregada');
+    console.log('[ES] Página carregada');
     await this.atualizarCoresDias();
   }
   
@@ -72,14 +71,12 @@ export class EstatisticasPage implements OnInit {
     console.log('[UI] Cores dos dias atualizadas:', this.coresDias);
   }
 
-
-  // Cor dinâmica para cada botão
   getCorDoDia(dia: string): string {
     return this.coresDias[dia] || 'medium';
   }
 
   async selecionarDia(dia: string) {
-    console.log('[UI] Dia selecionado:', dia);
+    console.log('[ES] Dia selecionado:', dia);
     this.diaSelecionado = dia;
 
     const treino = await this.dbService.getUltimoTreinoPorDiaSemana(dia);
@@ -87,7 +84,7 @@ export class EstatisticasPage implements OnInit {
     this.treinoSelecionado = treino;
 
     if (!treino || cor === 'medium') {
-      console.warn('[UI] Nenhum treino encontrado para o dia:', dia);
+      console.warn('[ES] Nenhum treino encontrado para o dia:', dia);
       this.nomeTreino = '';
       this.ultimaData = '';
       this.exercicios = [];
@@ -104,15 +101,13 @@ export class EstatisticasPage implements OnInit {
     const feitoTotal = this.exercicios.reduce((acc, e) => acc + (e.carga_feita || 0), 0);
     this.progressoGeral = metaTotal > 0 ? (feitoTotal / metaTotal) * 100 : 0;
 
-    console.log('[UI] Progresso atualizado:', this.progressoGeral);
+    console.log('[ES] Progresso atualizado:', this.progressoGeral);
 
     this.criarGraficoTreino(this.exercicios);
   }
 
-
-  // Exemplo: exibir gráfico ao escolher exercício
   async selecionarExercicio(exercicio: any) {
-    console.log('[TS] Exercício selecionado:', exercicio);
+    console.log('[ES] Exercício selecionado:', exercicio);
     await this.criarGraficoEvolucaoCarga(exercicio);
   }
 
@@ -152,7 +147,6 @@ export class EstatisticasPage implements OnInit {
       ],
     };
 
-    // Destroi gráfico anterior se já existir
     if (this.grafico) {
       this.grafico.destroy();
     }
@@ -185,7 +179,7 @@ export class EstatisticasPage implements OnInit {
 
   async criarGraficoEvolucaoCarga(exercicio: any) {
     if (!this.treinoSelecionado || !exercicio) {
-      console.warn('[TS] Treino ou exercício inválido para gráfico de evolução.');
+      console.warn('[ES] Treino ou exercício inválido para gráfico de evolução.');
       return;
     }
     
@@ -195,7 +189,7 @@ export class EstatisticasPage implements OnInit {
     // Filtra apenas os registros do exercício selecionado
     const dadosFiltrados = dados.filter((d: any) => d.nome_exercicio === exercicio.nome);
     if (dadosFiltrados.length === 0) {
-      console.warn('[TS] Sem dados de evolução para este exercício.');
+      console.warn('[ES] Sem dados de evolução para este exercício.');
       if (this.graficoEvolucao) {
         this.graficoEvolucao.destroy();
         this.graficoEvolucao = null;
@@ -203,7 +197,7 @@ export class EstatisticasPage implements OnInit {
       return;
     }
 
-    console.warn('[TS] 206 Dados de evolução:', dadosFiltrados);
+    console.warn('[ES] 206 Dados de evolução:', dadosFiltrados);
     const labels = dadosFiltrados.map((d: any) => d.data);
     const valores = dadosFiltrados.map((d: any) => d.carga_media);
 
@@ -213,7 +207,6 @@ export class EstatisticasPage implements OnInit {
     }
 
     const canvas = document.getElementById('graficoEvolucaoCarga') as HTMLCanvasElement;
-    console.warn('[TS] 216 Canvas:', canvas);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -246,6 +239,4 @@ export class EstatisticasPage implements OnInit {
       },
     });
   }
-
-
 }

@@ -178,31 +178,31 @@ export class DatabaseService {
       return;
     }
 
-    const exercicios = [
-      { nome: 'cadeira extensora', grupo: 'Quadríceps' },
-      { nome: 'agachamento livre', grupo: 'Posterior de coxa' },
-      { nome: 'leg press', grupo: 'Quadríceps' },
-      { nome: 'hack machine', grupo: 'Quadríceps' },
-      { nome: 'mesa flexora', grupo: 'Posterior de coxa' },
-      { nome: 'bulgaro', grupo: 'Glúteos' },
-      { nome: 'remada baixa', grupo: 'Dorsal' },
-      { nome: 'barra fixa', grupo: 'Dorsal' },
-      { nome: 'serrote', grupo: 'Dorsal' },
-      { nome: 'remada curvada', grupo: 'Trapézio médio' },
-      { nome: 'puxada neutra', grupo: 'Dorsal' },
-      { nome: 'elevacao lateral', grupo: 'Deltoide lateral' },
-      { nome: 'desenvolvimento', grupo: 'Deltoide anterior' },
-      { nome: 'elevacao frontal', grupo: 'Deltoide anterior' },
-      { nome: 'crucifixo inverso', grupo: 'Deltoide posterior' },
-      { nome: 'cross polia baixa', grupo: 'Peitoral inferior' },
-      { nome: 'supino', grupo: 'Peitoral maior' },
-      { nome: 'supino h inclinado', grupo: 'Peitoral superior' },
-      { nome: 'push up', grupo: 'Peitoral maior' },
-      { nome: 'triceps corda', grupo: 'Tríceps braquial' },
-      { nome: 'triceps testa', grupo: 'Tríceps braquial' },
-      { nome: 'rosca alternada', grupo: 'Bíceps braquial' },
-      { nome: 'martelo', grupo: 'Braquiorradial' },
-      { nome: 'abdominal máquina', grupo: 'Reto abdominal' }
+      const exercicios = [
+    { nome: 'Cadeira Extensora', grupo: 'Quadríceps' },
+    { nome: 'Agachamento Livre', grupo: 'Posterior De Coxa' },
+    { nome: 'Leg Press', grupo: 'Quadríceps' },
+    { nome: 'Hack Machine', grupo: 'Quadríceps' },
+    { nome: 'Mesa Flexora', grupo: 'Posterior De Coxa' },
+    { nome: 'Bulgaro', grupo: 'Glúteos' },
+    { nome: 'Remada Baixa', grupo: 'Dorsal' },
+    { nome: 'Barra Fixa', grupo: 'Dorsal' },
+    { nome: 'Serrote', grupo: 'Dorsal' },
+    { nome: 'Remada Curvada', grupo: 'Trapézio Médio' },
+    { nome: 'Puxada Neutra', grupo: 'Dorsal' },
+    { nome: 'Elevacao Lateral', grupo: 'Deltoide Lateral' },
+    { nome: 'Desenvolvimento', grupo: 'Deltoide Anterior' },
+    { nome: 'Elevacao Frontal', grupo: 'Deltoide Anterior' },
+    { nome: 'Crucifixo Inverso', grupo: 'Deltoide Posterior' },
+    { nome: 'Cross Polia Baixa', grupo: 'Peitoral Inferior' },
+    { nome: 'Supino', grupo: 'Peitoral Maior' },
+    { nome: 'Supino H Inclinado', grupo: 'Peitoral Superior' },
+    { nome: 'Push Up', grupo: 'Peitoral Maior' },
+    { nome: 'Triceps Corda', grupo: 'Tríceps Braquial' },
+    { nome: 'Triceps Testa', grupo: 'Tríceps Braquial' },
+    { nome: 'Rosca Alternada', grupo: 'Bíceps Braquial' },
+    { nome: 'Martelo', grupo: 'Braquiorradial' },
+    { nome: 'Abdominal Máquina', grupo: 'Reto Abdominal' }
     ];
 
     for (const ex of exercicios) {
@@ -228,7 +228,7 @@ export class DatabaseService {
     console.log('[DB] Inserindo treinos e vínculos...');
 
     //Inserir os treinos principais
-    const treinos = ['leg day', 'costas', 'ombro', 'peito', 'braco'];
+    const treinos = ['Leg Day', 'Costas', 'Ombro', 'Peito', 'Braço'];
     for (const nome of treinos) {
       await this.db.run(`INSERT INTO treinos (nome_treino) VALUES (?)`, [nome]);
     }

@@ -20,26 +20,26 @@
 
     <ion-card *ngFor="let ex of exercicios" class="exercicio-card">
       <ion-card-content>
-        <!-- Nome do exercício -->
+        <!-- Nome do exercício centralizado -->
         <h3 class="nome-exercicio">{{ ex.nome_exercicio }}</h3>
 
         <!-- Séries / Reps / Peso -->
         <div class="exercicio-valores">
           <div class="valor-item">
-            <span class="valor-label">Séries:</span>
-            <span class="valor"
+            <span class="valor-label">Séries</span>
+            <span class="valor-box"
               >{{ ex.series_meta ?? ex.series_feito ?? '-' }}</span
             >
           </div>
           <div class="valor-item">
-            <span class="valor-label">Reps:</span>
-            <span class="valor"
+            <span class="valor-label">Reps</span>
+            <span class="valor-box"
               >{{ ex.repeticao_meta ?? ex.repeticao_feita ?? '-' }}</span
             >
           </div>
           <div class="valor-item">
-            <span class="valor-label">Peso:</span>
-            <span class="valor"
+            <span class="valor-label">Peso</span>
+            <span class="valor-box"
               >{{ ex.carga_meta ?? ex.carga_feita ?? '-' }}</span
             >
           </div>

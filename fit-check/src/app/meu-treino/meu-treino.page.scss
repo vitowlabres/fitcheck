@@ -7,8 +7,8 @@
 }
 
 ion-title {
-    padding: 0;
-    font-weight: bold;
+  padding: 0;
+  font-weight: bold;
 }
 
 .icon-weight {
@@ -18,99 +18,36 @@ ion-title {
 
 .footer-buttons {
   display: flex;
-  flex-direction: column;     
-  align-items: flex-end;      
-  padding: 16px;              
-  gap: 12px;                  
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 16px;
+  gap: 12px;
 }
 
 .round-btn {
   --border-radius: 50%;
-  width: 60px;                
+  width: 60px;
   height: 60px;
-  min-width: 60px;            
+  min-width: 60px;
   display: flex;
-  justify-content: center;    
+  justify-content: center;
   align-items: center;
   padding: 0;
 }
 
 .round-btn img {
-  width: 28px;                
+  width: 28px;
   height: 28px;
 }
 
-
 .center-wrapper {
   display: flex;
-  justify-content: center; 
-  align-items: center;     
-  height: 100%;            
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   width: 100%;
 }
 
-.icon-weight {
-  width: 300px;
-  height: 300px;
-}
-
-// ion-modal.custom-modal {
-//   --width: 90%;         
-//   --max-width: 400px;   
-//   --height: 40%;       
-//   --border-radius: 16px;
-//   --border-radius: 16px;      
-//   --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
-//   --color: #000;              
-
-  
-//   align-items: center;
-//   justify-content: center;
-// }
-
-// .footer-modal {
-//   display: flex;
-//   justify-content: center; 
-//   align-items: center;     
-//   padding: 12px 0;
-// }
-
-// .button-fechar-modal {
-//   --color: var(--ion-color-medium); 
-//     width: 100%;
-//   justify-content: center;
-// }
-
-.toolbar-modal {
-  --justify-content: center; 
-}
-
-.toolbar-modal ion-title {
-  text-align: center;
-  width: 100%; 
-}
-
-.item-treino {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; 
-}
-
-.treino-text {
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.button-treino {
-  --background: transparent; 
-  --border-radius: 50%;      
-  padding: 4px;               
-}
-
-.button-treino img {
-  width: 24px;
-  height: 24px;
-}
 .treino-title {
   text-align: center;
   font-size: 1.8rem;
@@ -123,13 +60,15 @@ ion-title {
   margin-bottom: 12px;
   --background: #f2f2f2; /* fundo cinza claro */
   border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .nome-exercicio {
   font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 8px;
-  word-wrap: break-word; /* quebra se o nome for longo */
+  margin-bottom: 12px;
+  text-align: center; /* centralizado */
+  word-wrap: break-word;
 }
 
 .exercicio-valores {
@@ -149,9 +88,18 @@ ion-title {
   font-size: 0.85rem;
   font-weight: 500;
   color: #555;
+  margin-bottom: 4px;
 }
 
-.valor {
+.valor-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 1rem;
   font-weight: 600;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer; /* indica que é clicável futuramente */
 }

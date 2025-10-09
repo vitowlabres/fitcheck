@@ -277,92 +277,117 @@ export class DatabaseService {
     }
   }
   
-  // Popula a tabela historico com dados simulados
-  private async populateHistorico() {
-    console.log('[DB] Populando tabela historico com dados aleatórios...');
+  async populateHistorico() {
+    console.log('[DB] Populando tabela historico com múltiplas execuções por treino...');
 
     try {
       const db = await this.sqlite.retrieveConnection('fitcheckDB', false);
-      if (!db) {
-        throw new Error('Conexão com o banco não encontrada.');
-      }
+      if (!db) throw new Error('Conexão com o banco não encontrada.');
 
-      // Limpa dados anteriores (opcional)
+      // Limpa o histórico antigo (evita duplicar durante os testes)
       await db.execute('DELETE FROM historico;');
 
-      const diasSemana = [
-        'domingo',
+      // Tabelas base
+      const treinosRes = await db.query('SELECT id_treino FROM treinos;');
+      const treinos = treinosRes.values || [];
+
+      if (!treinos.length) {
+        console.warn('[DB] Nenhum treino encontrado para gerar histórico.');
+        return;
+      }
+
+      // Mapas de dias
+      const nomesDias = [
         'segunda-feira',
         'terça-feira',
         'quarta-feira',
         'quinta-feira',
         'sexta-feira',
-        'sábado'
+        'sábado',
+        'domingo'
       ];
       const hoje = new Date();
 
-      // Busca todos os treinos
-      const resultTreinos = await db.query('SELECT id_treino FROM treinos;');
+      // Helpers
+      const getDateForWeekday = (base: Date, weekdayIndex: number, weeksAgo: number): Date => {
+        // weekdayIndex: 0=domingo ... 6=sábado
+        const d = new Date(base);
+        const current = d.getDay();
+        const diffToTarget = (current + 7 - weekdayIndex) % 7; // quantos dias atrás está o weekday desejado
+        d.setDate(d.getDate() - diffToTarget - (weeksAgo * 7));
+        d.setHours(0, 0, 0, 0);
+        return d;
+      };
 
-      if (!resultTreinos.values || resultTreinos.values.length === 0) {
-        console.warn('[DB] Nenhum treino encontrado para popular histórico.');
-        return;
-      }
+      // Configuração simples e realista
+      const SEMANAS = 2;             // quantas semanas passadas considerar
+      const SESSOES_POR_SEMANA = 2;  // quantos dias por semana esse treino foi feito (ex.: 2x/sem)
 
-      // Para cada treino, busca os exercícios e gera variações aleatórias
-      for (const treino of resultTreinos.values) {
-        const resultExercicios = await db.query(
-          'SELECT * FROM treino_exercicios WHERE id_treino = ?;',
+      for (const treino of treinos) {
+        // exercícios (com metas) desse treino
+        const exRes = await db.query(
+          'SELECT id_exercicio, series_meta, repeticao_meta, carga_meta FROM treino_exercicios WHERE id_treino = ?;',
           [treino.id_treino]
         );
+        const exercicios = exRes.values || [];
+        if (!exercicios.length) continue;
 
-        if (!resultExercicios.values || resultExercicios.values.length === 0) continue;
+        // Escolhe 2 dias fixos da semana para este treino (ex.: Seg/Qui, Ter/Sex, Qua/Sab...)
+        // 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sab
+        const todosDias = [1,2,3,4,5,6,0];
+        const escolhidos = new Set<number>();
+        while (escolhidos.size < SESSOES_POR_SEMANA) {
+          const pick = todosDias[Math.floor(Math.random() * todosDias.length)];
+          escolhidos.add(pick);
+        }
+        const diasEscolhidos = Array.from(escolhidos); // ex.: [1,4] → segunda e quinta
 
-        const data = new Date(hoje);
-        data.setDate(hoje.getDate() - Math.floor(Math.random() * 7)); // data aleatória nos últimos 7 dias
-        const diaSemana = diasSemana[data.getDay()];
+        // Para cada semana no passado e para cada dia escolhido, gera uma sessão completa
+        for (let w = 0; w < SEMANAS; w++) {
+          for (const diaIdx of diasEscolhidos) {
+            const dataSessao = getDateForWeekday(hoje, diaIdx, w);        // data coerente com o dia
+            const diaSemanaStr = nomesDias[diaIdx];
 
-        for (const ex of resultExercicios.values) {
-          const cargaMeta = ex.carga_meta ?? 0;
-          const repeticaoMeta = ex.repeticao_meta ?? 0;
-          const seriesMeta = ex.series_meta ?? 0;
+            for (const ex of exercicios) {
+              const cargaMeta = ex.carga_meta ?? 0;
+              const repMeta   = ex.repeticao_meta ?? 0;
+              const seriesMeta= ex.series_meta ?? 0;
 
-          // Gera valores feitos com variação de 70% a 110% da meta
-          const variacao = 0.7 + Math.random() * 0.4; // 70–110%
-          const cargaFeita = Math.round(cargaMeta * variacao);
-          const repeticaoFeita = Math.max(1, Math.round(repeticaoMeta * variacao));
-          const seriesFeito = Math.max(1, Math.round(seriesMeta * (0.8 + Math.random() * 0.3)));
+              // Variações realistas (para colorir success/warning/danger nas estatísticas)
+              // Faixas pensadas para gerar resultados às vezes acima, às vezes abaixo da meta
+              const fCarga   = 0.65 + Math.random() * 0.5;  // 65% a 115% da meta
+              const fRep     = 0.80 + Math.random() * 0.4;  // 80% a 120% da meta
+              const fSeries  = 0.85 + Math.random() * 0.3;  // 85% a 115% da meta
 
-          await db.run(
-            `INSERT INTO historico (
-              id_treino,
-              id_exercicio,
-              data,
-              dia_semana,
-              carga_feita,
-              repeticao_feita,
-              carga_meta,
-              repeticao_meta,
-              series_feito,
-              series_meta
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-              treino.id_treino,
-              ex.id_exercicio,
-              data.toISOString().split('T')[0],
-              diaSemana,
-              cargaFeita,
-              repeticaoFeita,
-              cargaMeta,
-              repeticaoMeta,
-              seriesFeito,
-              seriesMeta
-            ]
-          );
+              const cargaFeita = Math.max(0, Math.round(cargaMeta * fCarga));
+              const repFeita   = Math.max(1, Math.round(repMeta   * fRep));
+              const seriesFeito= Math.max(1, Math.round(seriesMeta* fSeries));
+
+              await db.run(
+                `INSERT INTO historico (
+                  id_treino, id_exercicio, data, dia_semana,
+                  carga_feita, repeticao_feita, series_feito,
+                  carga_meta, repeticao_meta, series_meta
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                  treino.id_treino,
+                  ex.id_exercicio,
+                  dataSessao.toISOString().split('T')[0],
+                  diaSemanaStr,
+                  cargaFeita,
+                  repFeita,
+                  seriesFeito,
+                  cargaMeta,
+                  repMeta,
+                  seriesMeta
+                ]
+              );
+            }
+          }
         }
       }
 
-      console.log('[DB] Histórico populado com sucesso (valores aleatórios aplicados).');
+      console.log('[DB] Histórico populado com múltiplas execuções por treino (semanas recentes).');
     } catch (err) {
       console.error('[DB] Erro ao popular histórico:', err);
     }
@@ -501,30 +526,73 @@ export class DatabaseService {
     console.log(`[DB] Histórico registrado para treino ${id_treino}, exercício ${id_exercicio}`);
   }
 
-  // Obtém o último treino realizado em um dia da semana específico
-  async getUltimoTreinoPorDiaSemana(dia_semana: string): Promise<{ id_treino: number; data: string; nome_treino: string } | null> {
-    if (!this.db) throw new Error('DB não aberto');
+  async getUltimoTreinoPorDiaSemana(diaSemana: string) {
+    console.log('[DB] Buscando último treino do dia:', diaSemana);
 
-    const query = `
-      SELECT 
-        h.id_treino,
-        t.nome_treino,
-        MAX(h.data) AS data
-      FROM historico h
-      JOIN treinos t ON h.id_treino = t.id_treino
-      WHERE h.dia_semana = ?
-      GROUP BY h.id_treino
-      ORDER BY data DESC
-      LIMIT 1;
-    `;
+    try {
+      const db = await this.sqlite.retrieveConnection('fitcheckDB', false);
 
-    const result = await this.db.query(query, [dia_semana]);
-    if (result.values && result.values.length > 0) {
-      return result.values[0];
+      // Obter o id_treino e a data mais recente para o dia informado
+      const ultimoRes = await db.query(
+        `
+        SELECT 
+          id_treino,
+          MAX(data) AS ultima_data
+        FROM historico
+        WHERE LOWER(dia_semana) = LOWER(?)
+        GROUP BY id_treino
+        ORDER BY ultima_data DESC
+        LIMIT 1;
+        `,
+        [diaSemana]
+      );
+
+      if (!ultimoRes.values || ultimoRes.values.length === 0) {
+        console.warn('[DB] Nenhum treino encontrado para o dia:', diaSemana);
+        return null;
+      }
+
+      const { id_treino, ultima_data } = ultimoRes.values[0];
+
+      // Buscar o nome do treino na tabela "treinos"
+      const treinoRes = await db.query(
+        'SELECT nome_treino FROM treinos WHERE id_treino = ?;',
+        [id_treino]
+      );
+
+      const nome_treino = treinoRes.values?.[0]?.nome_treino ?? 'Treino';
+
+      // Buscar os exercícios do treino, referentes àquela data
+      const exRes = await db.query(
+        `
+        SELECT 
+          e.nome_exercicio AS nome,
+          h.id_exercicio,
+          h.carga_feita,
+          h.repeticao_feita,
+          h.series_feito,
+          h.carga_meta,
+          h.repeticao_meta,
+          h.series_meta
+        FROM historico h
+        JOIN exercicios e ON e.id_exercicio = h.id_exercicio
+        WHERE h.id_treino = ? AND h.data = ?;
+        `,
+        [id_treino, ultima_data]
+      );
+
+      const exercicios = exRes.values ?? [];
+
+      return {
+        id_treino,
+        nome_treino,
+        ultima_data,
+        exercicios,
+      };
+    } catch (err) {
+      console.error('[DB] Erro em getUltimoTreinoPorDiaSemana:', err);
+      return null;
     }
-
-    console.warn(`[DB] Nenhum treino encontrado para ${dia_semana}`);
-    return null;
   }
 
   async getExerciciosPorTreinoHistorico(id_treino: number): Promise<any[]> {
@@ -553,4 +621,3 @@ export class DatabaseService {
   }
 
 }
-

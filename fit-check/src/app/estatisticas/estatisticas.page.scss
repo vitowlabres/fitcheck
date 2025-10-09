@@ -23,7 +23,7 @@ ion-title {
 }
 
 ion-checkbox::part(container) {
-  border-radius: 50%;   /* círculo */
+  border-radius: 50%; 
   width: 28px;
   height: 28px;
 }
@@ -32,38 +32,50 @@ ion-checkbox::part(mark) {
   display: none;
 }
 
-.barra-progresso {
-  --height: 24px;                /* altura da barra */
-  --border-radius: 12px;         /* cantos arredondados */
-  --progress-background: green;  /* cor da barra preenchida */
-  --background: lightgray;       /* cor do fundo da barra */
+ion-item {
+  margin-top: 4px; 
 }
 
-.dias-semana {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  padding: 4px;
+ion-progress-bar {
+  margin-top: 4px; 
+}
+
+.barra-progresso {
+  --height: 24px;                
+  --border-radius: 12px;         
+  --progress-background: green;  
+  --background: lightgray;     
 }
 
 .grafico-container {
   position: relative;
   width: 100%;
-  height: 280px;
-  margin: 12px 0;
+  height: 200px; 
+  margin: 0 0 0 0; 
+  padding: 0;
+}
+
+.dias-semana {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  padding: 4px;
+  gap: 2px;
 }
 
 .dias-semana ion-button {
   flex: 1 1 calc(100% / 7);
-  margin: 2px;
-  font-size: 0.75rem;
+  margin: 0;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  padding: 4px 0;
+  padding: 2px 0;
+  min-width: 0; /* evita forçar largura mínima */
 }
 
 .percentual {
+  margin-top: 2px;
+  font-size: 0.9rem;
   text-align: center;
-  margin-top: 4px;
-  font-weight: bold;
 }
 

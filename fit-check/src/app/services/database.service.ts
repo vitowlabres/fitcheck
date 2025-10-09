@@ -85,6 +85,8 @@ export class DatabaseService {
     await this.populateExercicios();
     await this.populateTreinos();
     await this.populateHistorico();
+    await this.populateTreinador();
+
     this.readyResolver();
   } catch (err) {
     console.error('[DB] Erro ao inicializar:', err);
@@ -393,6 +395,28 @@ export class DatabaseService {
       console.error('[DB] Erro ao popular histórico:', err);
     }
   }
+
+  async populateTreinador(): Promise<void> {
+  if (!this.db) throw new Error('DB não aberto');
+
+  const insertTreinadores = `
+    INSERT INTO treinador (nome, telefone, email, cidade, UF) VALUES
+      ('Lucas Silva', '(11) 98877-1234', 'lucas.silva@exemplo.com', 'São Paulo', 'SP'),
+      ('Mariana Oliveira', '(21) 99766-4321', 'mariana.oliveira@exemplo.com', 'Rio de Janeiro', 'RJ'),
+      ('Rafael Souza', '(31) 99855-9876', 'rafael.souza@exemplo.com', 'Belo Horizonte', 'MG'),
+      ('Fernanda Costa', '(41) 99644-5566', 'fernanda.costa@exemplo.com', 'Curitiba', 'PR'),
+      ('Tiago Santos', '(71) 99533-7788', 'tiago.santos@exemplo.com', 'Salvador', 'BA'),
+      ('Carla Pereira', '(51) 99422-6677', 'carla.pereira@exemplo.com', 'Porto Alegre', 'RS'),
+      ('Pedro Gomes', '(61) 99311-4455', 'pedro.gomes@exemplo.com', 'Brasília', 'DF'),
+      ('Ana Lima', '(81) 99200-8899', 'ana.lima@exemplo.com', 'Recife', 'PE'),
+      ('Rodrigo Ribeiro', '(85) 99199-7788', 'rodrigo.ribeiro@exemplo.com', 'Fortaleza', 'CE'),
+      ('Juliana Martins', '(48) 99088-6677', 'juliana.martins@exemplo.com', 'Florianópolis', 'SC');
+  `;
+
+  await this.db.execute(insertTreinadores);
+  console.log('[DB] Tabela "treinador" populada com sucesso.');
+  }
+
 
   // Retorna os nomes dos treinos
   async getTreinos(): Promise<string[]> {

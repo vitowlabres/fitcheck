@@ -55,22 +55,22 @@ export class MeuTreinoPage {
     }
   }
 
-  async deletarTreino(nome_treino: string): Promise<void> {
-    try {
-      const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
-      if (!id_treino) {
-        console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
-        return;
-      }
-
-      await this.dbService.deletarTreino(id_treino);
-      await this.carregarTreinos();
-
-      console.log(`[DB] Treino "${nome_treino}" deletado.`);
-    } catch (err) {
-      console.error('[DB] Erro ao deletar treino:', err);
+  async desabilitarTreino(nome_treino: string) {
+  await this.dbService.ready();
+  try {
+    const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
+    if (!id_treino) {
+      console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
+      return;
     }
+
+    await this.dbService.desabilitarTreino(id_treino);
+    this.treinos = this.treinos.filter(t => t !== nome_treino);
+
+  } catch (err) {
+    console.error('[DB] Erro ao desabilitar treino:', err);
   }
+}
 
   async abrirModal() {
   const modal = await this.modalCtrl.create({

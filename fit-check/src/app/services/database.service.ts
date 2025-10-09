@@ -398,7 +398,7 @@ export class DatabaseService {
   async getTreinos(): Promise<string[]> {
     if (!this.db) throw new Error('DB não aberto');
 
-    const result = await this.db.query('SELECT nome_treino FROM treinos WHERE enable = 1 ORDER BY id_treino');
+    const result = await this.db.query('SELECT nome_treino FROM treinos WHERE ativo = 1 ORDER BY id_treino');
     return result.values?.map((row: any) => row.nome_treino) || [];
   }
 
@@ -464,7 +464,7 @@ export class DatabaseService {
   if (!this.db) throw new Error('DB não aberto');
 
   await this.db.run(
-    'UPDATE treinos SET enable = 0 WHERE id_treino = ?',
+    'UPDATE treinos SET ativo = 0 WHERE id_treino = ?',
     [id_treino]
   );
 

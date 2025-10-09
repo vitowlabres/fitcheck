@@ -459,7 +459,7 @@ export class DatabaseService {
     return id_treino;
   }
 
-  // Desabilita um treino e todos os vínculos associados
+  // Desabilita um treino
   async desabilitarTreino(id_treino: number): Promise<void> {
   if (!this.db) throw new Error('DB não aberto');
 

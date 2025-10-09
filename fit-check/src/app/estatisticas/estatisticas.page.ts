@@ -85,7 +85,7 @@ export class EstatisticasPage implements OnInit {
     const treino = await this.dbService.getUltimoTreinoPorDiaSemana(dia);
     const cor = this.getCorDoDia(dia);
     this.treinoSelecionado = treino;
-    
+
     if (!treino || cor === 'medium') {
       console.warn('[UI] Nenhum treino encontrado para o dia:', dia);
       this.nomeTreino = '';
@@ -184,14 +184,16 @@ export class EstatisticasPage implements OnInit {
   }
 
   async criarGraficoEvolucaoCarga(exercicio: any) {
-    if (!this.treinoSelecionado || !exercicio) return;
+    if (!this.treinoSelecionado || !exercicio) {
+      console.warn('[TS] Treino ou exercício inválido para gráfico de evolução.');
+      return;
+    }
     
     // Obtém os dados de evolução da carga
     const dados = await this.dbService.getEvolucaoCargaPorTreino(this.treinoSelecionado.id_treino);
 
     // Filtra apenas os registros do exercício selecionado
     const dadosFiltrados = dados.filter((d: any) => d.nome_exercicio === exercicio.nome);
-
     if (dadosFiltrados.length === 0) {
       console.warn('[TS] Sem dados de evolução para este exercício.');
       if (this.graficoEvolucao) {
@@ -201,6 +203,7 @@ export class EstatisticasPage implements OnInit {
       return;
     }
 
+    console.warn('[TS] 206 Dados de evolução:', dadosFiltrados);
     const labels = dadosFiltrados.map((d: any) => d.data);
     const valores = dadosFiltrados.map((d: any) => d.carga_media);
 
@@ -210,6 +213,7 @@ export class EstatisticasPage implements OnInit {
     }
 
     const canvas = document.getElementById('graficoEvolucaoCarga') as HTMLCanvasElement;
+    console.warn('[TS] 216 Canvas:', canvas);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;

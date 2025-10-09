@@ -8,8 +8,44 @@
 </ion-header>
 
 <ion-content fullscreen>
-  <div class="center-wrapper">
+  <!-- Se nenhum treino foi selecionado -->
+  <div class="center-wrapper" *ngIf="!exercicios || exercicios.length === 0">
     <img class="icon-weight" src="../../assets/icon/icon-weight.png" />
+  </div>
+
+  <!-- Se houver exercícios -->
+  <div *ngIf="exercicios!.length > 0" class="treino-container ion-padding">
+    <!-- Título centralizado e bonito -->
+    <h2 class="treino-title">{{ treinoSelecionado }}</h2>
+
+    <ion-card *ngFor="let ex of exercicios" class="exercicio-card">
+      <ion-card-content>
+        <!-- Nome do exercício -->
+        <h3 class="nome-exercicio">{{ ex.nome_exercicio }}</h3>
+
+        <!-- Séries / Reps / Peso -->
+        <div class="exercicio-valores">
+          <div class="valor-item">
+            <span class="valor-label">Séries:</span>
+            <span class="valor"
+              >{{ ex.series_meta ?? ex.series_feito ?? '-' }}</span
+            >
+          </div>
+          <div class="valor-item">
+            <span class="valor-label">Reps:</span>
+            <span class="valor"
+              >{{ ex.repeticao_meta ?? ex.repeticao_feita ?? '-' }}</span
+            >
+          </div>
+          <div class="valor-item">
+            <span class="valor-label">Peso:</span>
+            <span class="valor"
+              >{{ ex.carga_meta ?? ex.carga_feita ?? '-' }}</span
+            >
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>
 
@@ -19,56 +55,11 @@
     color="medium"
     id="open-modal"
     (click)="abrirModal()"
-    ><img src="../../assets/icon/icon-list.png" alt="Escolher treino salvo"
-  /></ion-button>
-  <ion-button class="round-btn" color="success"
-    ><img src="../../assets/icon/icon-add.png" alt="Criar novo treino"
-  /></ion-button>
+  >
+    <img src="../../assets/icon/icon-list.png" alt="Escolher treino salvo" />
+  </ion-button>
+
+  <ion-button class="round-btn" color="success">
+    <img src="../../assets/icon/icon-add.png" alt="Criar novo treino" />
+  </ion-button>
 </ion-footer>
-
-<!-- <ion-modal trigger="open-modal" class="custom-modal"> -->
-<!-- <ng-template> -->
-<!-- <ion-header class="header-modal">
-      <ion-toolbar class="toolbar-modal">
-        <ion-title>Escolher treino salvo</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content class="ion-padding">
-      <ion-list>
-        <ion-item *ngFor="let treino of treinos" class="item-treino">
-          <ion-label class="treino-text">{{ treino }}</ion-label>
-          <ion-buttons slot="end">
-            <ion-button
-              fill="clear"
-              class="button-treino button-deletar-treino"
-              (click)="deletarTreino(treino)"
-            >
-              <img
-                src="../../assets/icon/icon-trash.png"
-                alt="Deletar treino"
-              />
-            </ion-button>
-            <ion-button fill="clear" class="button-treino">
-              <img
-                src="../../assets/icon/icon-select.png"
-                alt="Selecionar treino"
-              />
-            </ion-button>
-          </ion-buttons>
-        </ion-item>
-      </ion-list>
-    </ion-content>
-    <ion-footer class="footer-modal">
-      <ion-buttons>
-        <ion-button
-          class="button-fechar-modal"
-          id="close-modal"
-          onclick="document.querySelector('ion-modal').dismiss()"
-        >
-          Fechar
-        </ion-button>
-      </ion-buttons>
-    </ion-footer> -->
-<!-- </ng-template> -->
-<!-- </ion-modal> -->

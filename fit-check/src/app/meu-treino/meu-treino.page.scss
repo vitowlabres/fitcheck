@@ -54,6 +54,32 @@ ion-title {
   height: 300px;
 }
 
+// ion-modal.custom-modal {
+//   --width: 90%;         
+//   --max-width: 400px;   
+//   --height: 40%;       
+//   --border-radius: 16px;
+//   --border-radius: 16px;      
+//   --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
+//   --color: #000;              
+
+  
+//   align-items: center;
+//   justify-content: center;
+// }
+
+// .footer-modal {
+//   display: flex;
+//   justify-content: center; 
+//   align-items: center;     
+//   padding: 12px 0;
+// }
+
+// .button-fechar-modal {
+//   --color: var(--ion-color-medium); 
+//     width: 100%;
+//   justify-content: center;
+// }
 
 .toolbar-modal {
   --justify-content: center; 
@@ -84,4 +110,48 @@ ion-title {
 .button-treino img {
   width: 24px;
   height: 24px;
+}
+.treino-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: var(--ion-color-primary);
+}
+
+.exercicio-card {
+  margin-bottom: 12px;
+  --background: #f2f2f2; /* fundo cinza claro */
+  border-radius: 12px;
+}
+
+.nome-exercicio {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  word-wrap: break-word; /* quebra se o nome for longo */
+}
+
+.exercicio-valores {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.valor-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.valor-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.valor {
+  font-size: 1rem;
+  font-weight: 600;
 }

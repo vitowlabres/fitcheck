@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input  } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,8 +17,7 @@ export class PopUpTreinosComponent {
 
   constructor(
     private modalCtrl: ModalController,
-    private dbService: DatabaseService
-  ) {}
+    private dbService: DatabaseService) { }
 
   fechar() {
     this.modalCtrl.dismiss();
@@ -26,18 +25,33 @@ export class PopUpTreinosComponent {
 
   async desabilitarTreino(nome_treino: string) {
        await this.dbService.ready();
-  try {
-    const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
-    if (!id_treino) {
-      console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
-      return;
+    try {
+      const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
+      if (!id_treino) {
+        console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
+        return;
+      }
+
+      await this.dbService.desabilitarTreino(id_treino);
+      this.treinos = this.treinos.filter(t => t !== nome_treino);
+
+    } catch (err) {
+      console.error('[DB] Erro ao desabilitar treino:', err);
     }
-
-    await this.dbService.desabilitarTreino(id_treino);
-    this.treinos = this.treinos.filter(t => t !== nome_treino);
-
-  } catch (err) {
-    console.error('[DB] Erro ao desabilitar treino:', err);
   }
-}
+  async selecionarTreino(nome_treino: string) {
+    await this.dbService.ready();
+    try {
+      const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
+      if (!id_treino) {
+        console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
+        return;
+      }
+
+      // Fecha o modal e devolve o nome e id para o pai
+      await this.modalCtrl.dismiss({ nome_treino, id_treino });
+    } catch (err) {
+      console.error('[DB] Erro ao selecionar treino:', err);
+    }
+  }
 }

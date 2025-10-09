@@ -16,7 +16,11 @@
         >
           <img src="../../assets/icon/icon-trash.png" alt="Deletar treino" />
         </ion-button>
-        <ion-button fill="clear" class="button-treino">
+        <ion-button
+          fill="clear"
+          class="button-treino"
+          (click)="selecionarTreino(treino)"
+        >
           <img
             src="../../assets/icon/icon-select.png"
             alt="Selecionar treino"

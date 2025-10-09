@@ -461,6 +461,9 @@ export class DatabaseService {
     `;
 
     const result = await this.db.query(query, [id_treino]);
+    console.log('[DEBUG DB] getExerciciosPorTreino retornou:', result);
+    console.log('[DEBUG DB] getExerciciosPorTreino retornou (valores):', result.values);
+    console.log(JSON.stringify(result, null, 2));
     return result.values || [];
   }
 

@@ -25,12 +25,13 @@ export class EstatisticasPage implements OnInit {
   treinoSelecionado: any = null;
   exercicios: any[] = [];
   progressoGeral: number = 0;
-  grafico: Chart | null = null;
+  graficoTreino: Chart | null = null;
   diaSelecionado: string = '';
   nomeTreino: string = ''
   ultimaData: string = '';
   progressValue: number = 0; // valor de progresso entre 0 e 1
   graficoEvolucao: any = null;
+  progressoCor: string = 'success';
 
   constructor(private dbService: DatabaseService) {}
 
@@ -53,17 +54,17 @@ export class EstatisticasPage implements OnInit {
       }
 
       const metaTotal = treino.exercicios.reduce(
-        (acc, e) => acc + (e.carga_meta ?? 0) * (e.series_meta ?? 1),
+        (acc, e) => acc + (e.repeticao_meta ?? 0) * (e.series_meta ?? 1),
         0
       );
       const feitoTotal = treino.exercicios.reduce(
-        (acc, e) => acc + (e.carga_feita ?? 0) * (e.series_feito ?? 1),
+        (acc, e) => acc + (e.repeticao_feita ?? 0) * (e.series_feito ?? 1),
         0
       );
 
       const perc = metaTotal > 0 ? (feitoTotal / metaTotal) * 100 : 0;
 
-      if (perc >= 90) this.coresDias[dia] = 'success'; // verde
+      if (perc >= 85) this.coresDias[dia] = 'success'; // verde
       else if (perc >= 60) this.coresDias[dia] = 'warning'; // amarelo
       else this.coresDias[dia] = 'danger'; // vermelho
     }
@@ -89,7 +90,17 @@ export class EstatisticasPage implements OnInit {
       this.ultimaData = '';
       this.exercicios = [];
       this.progressoGeral = 0;
-      this.criarGraficoTreino([]);
+      this.treinoSelecionado = null;
+
+      // Limpa os gráficos se existirem
+      if (this.graficoTreino) {
+        this.graficoTreino.destroy();
+        this.graficoTreino = null;
+      }
+      if (this.graficoEvolucao) {
+        this.graficoEvolucao.destroy();
+        this.graficoEvolucao = null;
+      }
       return;
     }
 
@@ -109,20 +120,29 @@ export class EstatisticasPage implements OnInit {
   async selecionarExercicio(exercicio: any) {
     console.log('[ES] Exercício selecionado:', exercicio);
     await this.criarGraficoEvolucaoCarga(exercicio);
-  }
 
-  destruirGrafico() {
-    if (this.grafico) {
-      this.grafico.destroy();
-      this.grafico = null;
+    if (exercicio && exercicio.carga_meta > 0) {
+      this.progressoGeral = (exercicio.carga_feita / exercicio.carga_meta) * 100;
+    } 
+    else {
+      this.progressoGeral = 0;
     }
+
+    if (this.progressoGeral >= 85) {
+      this.progressoCor = 'success';
+    } else if (this.progressoGeral >= 60) {
+      this.progressoCor = 'warning';
+    } else {
+      this.progressoCor = 'danger';
+    }
+
   }
 
   criarGraficoTreino(exercicios: any[] = this.exercicios) {
     if (!exercicios || exercicios.length === 0) {
-      if (this.grafico) {
-        this.grafico.destroy();
-        this.grafico = null;
+      if (this.graficoTreino) {
+        this.graficoTreino.destroy();
+        this.graficoTreino = null;
       }
       return;
     }
@@ -147,8 +167,8 @@ export class EstatisticasPage implements OnInit {
       ],
     };
 
-    if (this.grafico) {
-      this.grafico.destroy();
+    if (this.graficoTreino) {
+      this.graficoTreino.destroy();
     }
 
     const canvas = document.getElementById('graficoTreino') as HTMLCanvasElement;
@@ -157,7 +177,7 @@ export class EstatisticasPage implements OnInit {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    this.grafico = new Chart(ctx, {
+    this.graficoTreino = new Chart(ctx, {
       type: 'bar',
       data,
       options: {

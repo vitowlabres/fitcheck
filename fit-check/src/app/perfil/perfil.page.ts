@@ -38,10 +38,11 @@ export class PerfilPage implements OnInit {
     const uf = this.ufFiltro;
 
     this.treinadoresFiltrados = this.treinadores.filter(t => {
-      const matchNome = !nome || t.nome.toLowerCase().includes(nome);
-      const matchCidade = !cidade || t.cidade === cidade;
-      const matchUf = !uf || t.UF === uf;
-      return matchNome && matchCidade && matchUf;
-    });
-  }
+    const matchNome = !nome || t.nome.toLowerCase().includes(nome);
+    const matchCidade = !cidade || t.cidade === cidade;
+    const matchUf = !uf || t.UF === uf;
+    return matchNome && matchCidade && matchUf;
+  });
+}
+
 }

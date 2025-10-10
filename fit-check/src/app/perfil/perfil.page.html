@@ -23,35 +23,51 @@
     </div>
   </ion-card>
 
+  <!-- Título da seção -->
+  <ion-card-title class="section-title">Buscar Treinador</ion-card-title>
+
   <!-- Filtros -->
   <div class="filtros-container">
     <ion-item>
       <ion-label position="floating">Nome</ion-label>
-      <ion-input [(ngModel)]="nomeFiltro"></ion-input>
+      <ion-input
+        [(ngModel)]="nomeFiltro"
+        (ionInput)="aplicarFiltros()"
+      ></ion-input>
     </ion-item>
 
     <div class="filtros-linha">
+      <!-- Filtro Cidade -->
       <ion-item>
-        <ion-label position="floating">Cidade</ion-label>
-        <ion-input [(ngModel)]="cidadeFiltro"></ion-input>
+        <ion-select [(ngModel)]="cidadeFiltro" (ionChange)="aplicarFiltros()">
+          <ion-select-option value="">Cidade</ion-select-option>
+          <ion-select-option *ngFor="let c of cidades" [value]="c"
+            >{{ c }}</ion-select-option
+          >
+        </ion-select>
       </ion-item>
 
+      <!-- Filtro UF -->
       <ion-item>
-        <ion-label position="floating">UF</ion-label>
-        <ion-input [(ngModel)]="ufFiltro"></ion-input>
+        <ion-select [(ngModel)]="ufFiltro" (ionChange)="aplicarFiltros()">
+          <ion-select-option value="">UF</ion-select-option>
+          <ion-select-option *ngFor="let u of ufs" [value]="u"
+            >{{ u }}</ion-select-option
+          >
+        </ion-select>
       </ion-item>
     </div>
   </div>
 
   <!-- Lista de Treinadores -->
   <ion-list>
-    <ion-card *ngFor="let t of treinadores" class="treinador-card">
+    <ion-card *ngFor="let t of treinadoresFiltrados" class="treinador-card">
       <ion-card-header>
         <ion-card-title>{{ t.nome }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <p><strong>Cidade:</strong> {{ t.cidade }}</p>
-        <p><strong>UF:</strong> {{ t.uf }}</p>
+        <p><strong>UF:</strong> {{ t.UF }}</p>
         <p><strong>Telefone:</strong> {{ t.telefone }}</p>
         <p><strong>Email:</strong> {{ t.email }}</p>
       </ion-card-content>

@@ -9,14 +9,17 @@
 ion-title {
   padding: 0;
   font-weight: bold;
+  color: #d0d0d0;
 }
 
 ion-card-title {
   font-weight: bolder;
+  color: #e0e0e0;
 }
 
 ion-card-subtitle {
   font-weight: bold;
+  color: #b0b0b0;
 }
 
 .icon-weight {
@@ -28,9 +31,13 @@ ion-card-subtitle {
   border-radius: 12px;
   overflow: hidden;
   padding: 12px;
+  background-color: #a8a8a8;
+  color: #2b2b2b;
+  
+  margin: 20px;
 }
 
-/* NOVO - organiza o avatar e os textos em coluna centralizada */
+/* Avatar e textos centralizados */
 .profile-content {
   display: flex;
   flex-direction: column;
@@ -38,7 +45,6 @@ ion-card-subtitle {
   justify-content: center;
 }
 
-/* Botão circular com fundo cinza claro */
 .avatar {
   width: 150px;
   height: 150px;
@@ -57,27 +63,31 @@ ion-card-subtitle {
   object-fit: cover;
 }
 
-/* Informações do usuário centralizadas */
 .user-info {
   box-shadow: none;
   text-align: center;
+  background: none;
 }
 
 .user-info ion-card-title {
   margin: 0;
   font-size: 1rem;
+  color: #222;
 }
 
 .user-info ion-card-subtitle {
   margin: 8px 0;
+  color: #3c3c3c;
 }
 
-ion-item {
-  --border-radius: 12px;
-  margin: 10px;
+/* ===== Filtros ===== */
+.section-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin: 20px 16px 8px 16px;
+  color: #d0d0d0;
 }
 
-/* ===== NOVO: layout dos filtros ===== */
 .filtros-container {
   display: flex;
   flex-direction: column;
@@ -94,8 +104,25 @@ ion-item {
   flex: 1;
 }
 
+ion-item {
+  --border-radius: 12px;
+  margin: 10px;
+  --background: #c4c4c4;
+  color: #2b2b2b;
+}
+
 /* ===== Estilo dos cards ===== */
 .treinador-card {
   margin: 12px;
   border-radius: 12px;
+  background-color: #b8b8b8;
+  color: #2a2a2a;
+}
+
+.treinador-card p {
+  color: #333;
+}
+
+.treinador-card strong {
+  color: #000;
 }

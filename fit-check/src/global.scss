@@ -77,3 +77,8 @@
   --ion-color-medium: #6b7280;
   --ion-color-light: #d1d5db;
 }
+
+.alert-radio-label.sc-ion-alert-md,
+.alert-radio-label.sc-ion-alert-ios {
+  color: #ffffff !important; /* branco, mantém o restante do popup padrão */
+}

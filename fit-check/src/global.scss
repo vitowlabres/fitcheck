@@ -47,3 +47,33 @@
   align-items: center;
   justify-content: center;
 }
+
+/* ====== Forçar modo escuro ====== */
+:root {
+  color-scheme: dark;
+
+  /* Cores principais do tema escuro */
+  --ion-background-color: #1e1e1e;
+  --ion-background-color-rgb: 30, 30, 30;
+
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
+  --ion-toolbar-background: #2a2a2a;
+  --ion-toolbar-color: #ffffff;
+
+  --ion-item-background: #2a2a2a;
+  --ion-item-color: #ffffff;
+
+  --ion-card-background: #2b2b2b;
+  --ion-card-color: #ffffff;
+
+  --ion-color-primary: #3b82f6;
+  --ion-color-secondary: #6366f1;
+  --ion-color-tertiary: #10b981;
+  --ion-color-success: #22c55e;
+  --ion-color-warning: #facc15;
+  --ion-color-danger: #ef4444;
+  --ion-color-medium: #6b7280;
+  --ion-color-light: #d1d5db;
+}

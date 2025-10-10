@@ -7,17 +7,17 @@
 }
 
 ion-title {
-    padding: 0;
-    font-weight: bold;
+  padding: 0;
+  font-weight: bold;
 }
 
 ion-card-title {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 ion-card-subtitle {
-    font-weight: bold;
-  }
+  font-weight: bold;
+}
 
 .icon-weight {
   width: 300px;
@@ -25,49 +25,77 @@ ion-card-subtitle {
 }
 
 .profile {
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 12px;
+}
+
+/* NOVO - organiza o avatar e os textos em coluna centralizada */
+.profile-content {
   display: flex;
-  align-items: center;   
-  gap: 12px;             
-  padding: 12px;       
-    border-radius: 12px;
-  overflow: hidden; 
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botão circular com fundo cinza claro */
+.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px auto 15px auto;
+  overflow: hidden;
+  background-color: #f2f2f2; /* fundo cinza claro */
 }
 
 .avatar-photo {
   width: 60%;
   height: 60%;
-  object-fit: cover;           /* Preenche o card mantendo proporção */
+  object-fit: cover;
 }
 
-.avatar {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  display: flex;               /* Torna o card um container flex */
-  justify-content: center;     /* Centraliza horizontalmente */
-  align-items: center;         /* Centraliza verticalmente */
-  margin: 5px auto;            /* Centraliza o card na tela se quiser */
-  overflow: hidden;            /* Garante que a imagem não ultrapasse o círculo */
-}
-
-
-
-
-.user-info { 
+/* Informações do usuário centralizadas */
+.user-info {
   box-shadow: none;
+  text-align: center;
 }
 
 .user-info ion-card-title {
   margin: 0;
-  font-size: 1rem;   
+  font-size: 1rem;
 }
 
 .user-info ion-card-subtitle {
-  margin: 8px 0; 
+  margin: 8px 0;
 }
 
 ion-item {
-  // --background: #fff;     
-  --border-radius: 12px;  
-  margin: 10px;           
+  --border-radius: 12px;
+  margin: 10px;
+}
+
+/* ===== NOVO: layout dos filtros ===== */
+.filtros-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+}
+
+.filtros-linha {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.filtros-linha ion-item {
+  flex: 1;
+}
+
+/* ===== Estilo dos cards ===== */
+.treinador-card {
+  margin: 12px;
+  border-radius: 12px;
 }

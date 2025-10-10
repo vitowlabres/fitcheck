@@ -443,6 +443,12 @@ export class DatabaseService {
     return null;
   }
 
+  async getTreinadores(): Promise<any[]> { 
+    if (!this.db) throw new Error('DB não aberto'); 
+    const result = await this.db.query('SELECT nome, telefone, email, cidade, UF FROM treinador ORDER BY nome;');
+    return result.values || [];
+  }
+
   // Retorna os exercícios vinculados a um treino específico
   async getExerciciosPorTreino(id_treino: number): Promise<any[]> {
     if (!this.db) throw new Error('DB não aberto');

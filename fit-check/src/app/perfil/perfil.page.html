@@ -9,24 +9,52 @@
 
 <ion-content [fullscreen]="true">
   <ion-card class="profile">
-    <ion-button class="avatar"
-      ><img class="avatar-photo" src="../../assets/icon/icon-add-photo.png"
-    /></ion-button>
+    <div class="profile-content">
+      <ion-button class="avatar">
+        <img class="avatar-photo" src="../../assets/icon/icon-add-photo.png" />
+      </ion-button>
 
-    <ion-card class="user-info">
-      <ion-card-title>Nome</ion-card-title>
-      <ion-card-subtitle>Idade</ion-card-subtitle>
-      <ion-card-subtitle>Tempo de uso</ion-card-subtitle>
-      <ion-card-subtitle>email@email.com</ion-card-subtitle>
-    </ion-card>
+      <ion-card class="user-info">
+        <ion-card-title>Nome</ion-card-title>
+        <ion-card-subtitle>Idade</ion-card-subtitle>
+        <ion-card-subtitle>Tempo de uso</ion-card-subtitle>
+        <ion-card-subtitle>email@email.com</ion-card-subtitle>
+      </ion-card>
+    </div>
   </ion-card>
-  <ion-item class="treinador-select">
-    <ion-label position="stacked">Treinador:</ion-label>
-    <ion-select placeholder="Selecionar">
-      <ion-select-option value="op1">Jose Claudio</ion-select-option>
-      <ion-select-option value="op2">Vítor Souza</ion-select-option>
-      <ion-select-option value="op3">Carlos Silva</ion-select-option>
-    </ion-select>
-  </ion-item>
-  <!-- <app-explore-container name="Perfil page"></app-explore-container> -->
+
+  <!-- Filtros -->
+  <div class="filtros-container">
+    <ion-item>
+      <ion-label position="floating">Nome</ion-label>
+      <ion-input [(ngModel)]="nomeFiltro"></ion-input>
+    </ion-item>
+
+    <div class="filtros-linha">
+      <ion-item>
+        <ion-label position="floating">Cidade</ion-label>
+        <ion-input [(ngModel)]="cidadeFiltro"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">UF</ion-label>
+        <ion-input [(ngModel)]="ufFiltro"></ion-input>
+      </ion-item>
+    </div>
+  </div>
+
+  <!-- Lista de Treinadores -->
+  <ion-list>
+    <ion-card *ngFor="let t of treinadores" class="treinador-card">
+      <ion-card-header>
+        <ion-card-title>{{ t.nome }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Cidade:</strong> {{ t.cidade }}</p>
+        <p><strong>UF:</strong> {{ t.uf }}</p>
+        <p><strong>Telefone:</strong> {{ t.telefone }}</p>
+        <p><strong>Email:</strong> {{ t.email }}</p>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
 </ion-content>

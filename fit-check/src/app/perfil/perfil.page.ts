@@ -42,7 +42,12 @@ export class PerfilPage implements OnInit {
     const matchCidade = !cidade || t.cidade === cidade;
     const matchUf = !uf || t.UF === uf;
     return matchNome && matchCidade && matchUf;
-  });
-}
+    });
+  }
+
+  temFiltro(): boolean {
+    const nome = (this.nomeFiltro || '').toString().trim();
+    return !!nome || !!this.cidadeFiltro || !!this.ufFiltro;
+  }
 
 }

@@ -59,17 +59,32 @@
     </div>
   </div>
 
-  <!-- Lista de Treinadores -->
-  <ion-list>
-    <ion-card *ngFor="let t of treinadoresFiltrados" class="treinador-card">
-      <ion-card-header>
-        <ion-card-title>{{ t.nome }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p><strong>{{ t.cidade }} - {{ t.UF }}</strong></p>
-        <p>{{ t.telefone }}</p>
-        <p>{{ t.email }}</p>
-      </ion-card-content>
-    </ion-card>
-  </ion-list>
+  <!-- Lista de Treinadores: APENAS mostra se existir algum filtro -->
+  <ng-container *ngIf="temFiltro(); else semFiltro">
+    <ion-list
+      *ngIf="treinadoresFiltrados && treinadoresFiltrados.length > 0; else semResultado"
+    >
+      <ion-card *ngFor="let t of treinadoresFiltrados" class="treinador-card">
+        <ion-card-header>
+          <ion-card-title>{{ t.nome }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p><strong>{{ t.cidade }} - {{ t.UF }}</strong></p>
+          <p>{{ t.telefone }}</p>
+          <p>{{ t.email }}</p>
+        </ion-card-content>
+      </ion-card>
+    </ion-list>
+  </ng-container>
+
+  <!-- Templates que faltavam -->
+  <ng-template #semFiltro>
+    <div class="no-filter">Use os filtros acima para buscar um treinador.</div>
+  </ng-template>
+
+  <ng-template #semResultado>
+    <div class="no-results">
+      Nenhum treinador encontrado com os filtros selecionados.
+    </div>
+  </ng-template>
 </ion-content>

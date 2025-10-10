@@ -112,9 +112,22 @@ export class EstatisticasPage implements OnInit {
     const feitoTotal = this.exercicios.reduce((acc, e) => acc + (e.carga_feita || 0), 0);
     this.progressoGeral = metaTotal > 0 ? (feitoTotal / metaTotal) * 100 : 0;
 
+    if (this.progressoGeral >= 85) {
+      this.progressoCor = 'success';
+    } else if (this.progressoGeral >= 60) {
+      this.progressoCor = 'warning';
+    } else {
+      this.progressoCor = 'danger';
+    }
+
     console.log('[ES] Progresso atualizado:', this.progressoGeral);
 
     this.criarGraficoTreino(this.exercicios);
+
+    if (this.graficoEvolucao) {
+      this.graficoEvolucao.destroy();
+      this.graficoEvolucao = null;
+    }
   }
 
   async selecionarExercicio(exercicio: any) {

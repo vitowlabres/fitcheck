@@ -10,9 +10,21 @@
 <ion-content [fullscreen]="true">
   <ion-card class="profile">
     <div class="profile-content">
-      <ion-button class="avatar">
-        <img class="avatar-photo" src="../../assets/icon/icon-add-photo.png" />
-      </ion-button>
+      <div class="avatar-container">
+        <img
+          *ngIf="fotoPerfil; else iconePadrao"
+          [src]="fotoPerfil"
+          alt="Foto de perfil"
+          class="avatar"
+          (click)="selecionarFoto()"
+        />
+
+        <ng-template #iconePadrao>
+          <ion-button class="avatar" (click)="selecionarFoto()">
+            <ion-icon name="camera-outline"></ion-icon>
+          </ion-button>
+        </ng-template>
+      </div>
 
       <ion-card class="user-info">
         <ion-card-title>Nome</ion-card-title>

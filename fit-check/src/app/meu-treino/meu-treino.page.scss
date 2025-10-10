@@ -63,6 +63,7 @@ ion-title {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
+
 .nome-exercicio {
   font-size: 1.2rem;
   font-weight: 600;
@@ -104,4 +105,41 @@ ion-title {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: #555;
   cursor: pointer; /* indica que é clicável futuramente */
+}
+
+.treino-novo-card-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh; /* centraliza verticalmente */
+  padding: 0 16px;
+}
+
+.salvar-treino-btn {
+  margin-top: 12px;
+  --background: #f2f2f247 !important; /* mesma cor do background do exercicio-card */
+  color: #414141; /* cor similar ao texto do nome-exercicio */
+}
+
+label-box-nome-treino{
+  color: #414141;
+  --background: #f2f2f2
+}
+
+card-content-novo-treino{
+  --background: #f2f2f2; /* mesma cor do exercicio-card */
+}
+item-content-novo-treino{
+  --background: #f2f2f2; /* branco dentro do item */
+}
+
+ion-input {
+  --background: #ffffff; /* branco dentro do input */
+  border-radius: 8px;
+  padding: 0;
+  color: #414141; /* cor do texto escura */
+}
+
+div.item-native::after{
+  --background: #f2f2f2 !important; /* mesma cor do exercicio-card */
 }

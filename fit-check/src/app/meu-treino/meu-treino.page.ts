@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { DatabaseService } from '../services/database.service';
 import { ModalController } from '@ionic/angular';
 import { PopUpTreinosComponent } from '../pop-up-treinos/pop-up-treinos.component';
@@ -14,6 +14,10 @@ export class MeuTreinoPage {
   treinos: string[] = [];
   exercicios: any[] = [];
   treinoSelecionado: string | null = null; 
+  criandoTreino: boolean = false;
+  novoTreinoNome: string = '';
+
+   @ViewChild('inputNovoTreino', { static: false }) inputNovoTreino!: ElementRef;
 
   constructor(
     private dbService: DatabaseService,
@@ -105,5 +109,26 @@ export class MeuTreinoPage {
     await this.carregarTreinos();
   }
 
+  // Criar novo treino
+  criarTreino() {
+    this.criandoTreino = true;
+    this.novoTreinoNome = '';
+    this.exercicios = []; // opcional: esconde lista de exercícios
+
+    // Delay para garantir que o card já foi renderizado
+    setTimeout(() => {
+      if (this.inputNovoTreino?.nativeElement) {
+        this.inputNovoTreino.nativeElement.focus(); // força abrir teclado
+      }
+    }, 300);
+  }
+
+  salvarNomeTreino() {
+    if (this.novoTreinoNome && this.novoTreinoNome.trim() !== '') {
+      this.treinoSelecionado = this.novoTreinoNome.trim();
+      this.exercicios = []; // inicializa lista de exercícios vazia
+      this.criandoTreino = false;
+    }
+  }
 
 }

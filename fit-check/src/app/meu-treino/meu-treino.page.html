@@ -8,22 +8,45 @@
 </ion-header>
 
 <ion-content fullscreen>
-  <!-- Se nenhum treino foi selecionado -->
-  <div class="center-wrapper" *ngIf="!exercicios || exercicios.length === 0">
+  <!-- Se nenhum treino foi selecionado e não está criando treino -->
+  <div
+    class="center-wrapper"
+    *ngIf="(!exercicios || exercicios.length === 0) && !criandoTreino && !treinoSelecionado"
+  >
     <img class="icon-weight" src="../../assets/icon/icon-weight.png" />
   </div>
 
+  <!-- Card de criação de treino -->
+  <div *ngIf="criandoTreino" class="treino-novo-card-center">
+    <ion-card class="exercicio-card">
+      <!-- <ion-card-content class="card-content-novo-treino"> -->
+      <ion-item class="item-content-novo-treino">
+        <ion-label class="label-box-nome-treino" position="floating"
+          >Nome do Treino</ion-label
+        >
+        <ion-input #inputNovoTreino [(ngModel)]="novoTreinoNome"></ion-input>
+      </ion-item>
+      <ion-button
+        class="salvar-treino-btn"
+        expand="block"
+        (click)="salvarNomeTreino()"
+      >
+        Salvar nome
+      </ion-button>
+      <!-- </ion-card-content> -->
+    </ion-card>
+  </div>
+
   <!-- Se houver exercícios -->
-  <div *ngIf="exercicios!.length > 0" class="treino-container ion-padding">
-    <!-- Título centralizado e bonito -->
+  <div
+    *ngIf="exercicios!.length > 0 || treinoSelecionado"
+    class="treino-container ion-padding"
+  >
     <h2 class="treino-title">{{ treinoSelecionado }}</h2>
 
     <ion-card *ngFor="let ex of exercicios" class="exercicio-card">
       <ion-card-content>
-        <!-- Nome do exercício centralizado -->
         <h3 class="nome-exercicio">{{ ex.nome_exercicio }}</h3>
-
-        <!-- Séries / Reps / Peso -->
         <div class="exercicio-valores">
           <div class="valor-item">
             <span class="valor-label">Séries</span>
@@ -59,7 +82,7 @@
     <img src="../../assets/icon/icon-list.png" alt="Escolher treino salvo" />
   </ion-button>
 
-  <ion-button class="round-btn" color="success">
+  <ion-button class="round-btn" color="success" (click)="criarTreino()">
     <img src="../../assets/icon/icon-add.png" alt="Criar novo treino" />
   </ion-button>
 </ion-footer>

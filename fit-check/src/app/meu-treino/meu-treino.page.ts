@@ -123,12 +123,38 @@ export class MeuTreinoPage {
     }, 300);
   }
 
-  salvarNomeTreino() {
-    if (this.novoTreinoNome && this.novoTreinoNome.trim() !== '') {
-      this.treinoSelecionado = this.novoTreinoNome.trim();
-      this.exercicios = []; // inicializa lista de exercícios vazia
+  async salvarNomeTreino() {
+    const nome = this.novoTreinoNome?.trim();
+    if (!nome) return;
+
+    try {
+      await this.dbService.ready();
+
+      // Cria o treino no banco e obtém o ID
+      const id_treino = await this.dbService.addTreino(nome);
+
+      // Limpa input e variável
+      this.novoTreinoNome = '';
+      if (this.inputNovoTreino?.nativeElement) {
+        this.inputNovoTreino.nativeElement.value = '';
+      }
+
+      // Atualiza as variáveis locais
+      this.treinoSelecionado = nome;
+      this.exercicios = []; // inicia sem exercícios
       this.criandoTreino = false;
+
+      // Atualiza a lista de treinos ativos
+      await this.carregarTreinos();
+
+      // Seleciona automaticamente o treino recém-criado
+      await this.selecionarTreino(nome, id_treino);
+
+      console.log('[DEBUG] Treino criado e selecionado:', { nome, id_treino });
+    } catch (err) {
+      console.error('[DB] Erro ao criar novo treino:', err);
     }
   }
+
 
 }

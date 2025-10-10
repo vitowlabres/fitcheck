@@ -91,7 +91,7 @@ export class DatabaseService {
   } catch (err) {
     console.error('[DB] Erro ao inicializar:', err);
   }
-}
+  }
 
   async ready(): Promise<void> {
     return this.isReady;
@@ -170,7 +170,7 @@ export class DatabaseService {
 
   // Popula a tabela exercicios
   private async populateExercicios(): Promise<void> {
-    if (!this.db) throw new Error('DB não aberto');
+    if (!this.db) throw new Error('[DB] DB não aberto');
 
     const count = await this.db.query('SELECT COUNT(*) as total FROM exercicios');
     if (count.values && count.values[0].total > 0) {
@@ -178,31 +178,31 @@ export class DatabaseService {
       return;
     }
 
-      const exercicios = [
-    { nome: 'Cadeira Extensora', grupo: 'Quadríceps' },
-    { nome: 'Agachamento Livre', grupo: 'Posterior De Coxa' },
-    { nome: 'Leg Press', grupo: 'Quadríceps' },
-    { nome: 'Hack Machine', grupo: 'Quadríceps' },
-    { nome: 'Mesa Flexora', grupo: 'Posterior De Coxa' },
-    { nome: 'Bulgaro', grupo: 'Glúteos' },
-    { nome: 'Remada Baixa', grupo: 'Dorsal' },
-    { nome: 'Barra Fixa', grupo: 'Dorsal' },
-    { nome: 'Serrote', grupo: 'Dorsal' },
-    { nome: 'Remada Curvada', grupo: 'Trapézio Médio' },
-    { nome: 'Puxada Neutra', grupo: 'Dorsal' },
-    { nome: 'Elevacao Lateral', grupo: 'Deltoide Lateral' },
-    { nome: 'Desenvolvimento', grupo: 'Deltoide Anterior' },
-    { nome: 'Elevacao Frontal', grupo: 'Deltoide Anterior' },
-    { nome: 'Crucifixo Inverso', grupo: 'Deltoide Posterior' },
-    { nome: 'Cross Polia Baixa', grupo: 'Peitoral Inferior' },
-    { nome: 'Supino', grupo: 'Peitoral Maior' },
-    { nome: 'Supino H Inclinado', grupo: 'Peitoral Superior' },
-    { nome: 'Push Up', grupo: 'Peitoral Maior' },
-    { nome: 'Triceps Corda', grupo: 'Tríceps Braquial' },
-    { nome: 'Triceps Testa', grupo: 'Tríceps Braquial' },
-    { nome: 'Rosca Alternada', grupo: 'Bíceps Braquial' },
-    { nome: 'Martelo', grupo: 'Braquiorradial' },
-    { nome: 'Abdominal Máquina', grupo: 'Reto Abdominal' }
+    const exercicios = [
+      { nome: 'Cadeira Extensora', grupo: 'Quadríceps' },
+      { nome: 'Agachamento Livre', grupo: 'Posterior De Coxa' },
+      { nome: 'Leg Press', grupo: 'Quadríceps' },
+      { nome: 'Hack Machine', grupo: 'Quadríceps' },
+      { nome: 'Mesa Flexora', grupo: 'Posterior De Coxa' },
+      { nome: 'Bulgaro', grupo: 'Glúteos' },
+      { nome: 'Remada Baixa', grupo: 'Dorsal' },
+      { nome: 'Barra Fixa', grupo: 'Dorsal' },
+      { nome: 'Serrote', grupo: 'Dorsal' },
+      { nome: 'Remada Curvada', grupo: 'Trapézio Médio' },
+      { nome: 'Puxada Neutra', grupo: 'Dorsal' },
+      { nome: 'Elevacao Lateral', grupo: 'Deltoide Lateral' },
+      { nome: 'Desenvolvimento', grupo: 'Deltoide Anterior' },
+      { nome: 'Elevacao Frontal', grupo: 'Deltoide Anterior' },
+      { nome: 'Crucifixo Inverso', grupo: 'Deltoide Posterior' },
+      { nome: 'Cross Polia Baixa', grupo: 'Peitoral Inferior' },
+      { nome: 'Supino', grupo: 'Peitoral Maior' },
+      { nome: 'Supino H Inclinado', grupo: 'Peitoral Superior' },
+      { nome: 'Push Up', grupo: 'Peitoral Maior' },
+      { nome: 'Triceps Corda', grupo: 'Tríceps Braquial' },
+      { nome: 'Triceps Testa', grupo: 'Tríceps Braquial' },
+      { nome: 'Rosca Alternada', grupo: 'Bíceps Braquial' },
+      { nome: 'Martelo', grupo: 'Braquiorradial' },
+      { nome: 'Abdominal Máquina', grupo: 'Reto Abdominal' }
     ];
 
     for (const ex of exercicios) {
@@ -225,7 +225,7 @@ export class DatabaseService {
       return; 
     }
 
-    console.log('[DB] Inserindo treinos e vínculos...');
+    console.log('[DB] Inserindo treinos');
 
     //Inserir os treinos principais
     const treinos = ['Leg Day', 'Costas', 'Ombro', 'Peito', 'Braço'];
@@ -281,7 +281,7 @@ export class DatabaseService {
   }
   
   async populateHistorico() {
-    console.log('[DB] Populando tabela historico com múltiplas execuções por treino...');
+    console.log('[DB] Populando tabela historico...');
 
     try {
       const db = await this.sqlite.retrieveConnection('fitcheckDB', false);
@@ -311,9 +311,7 @@ export class DatabaseService {
       ];
       const hoje = new Date();
 
-      // Helpers
       const getDateForWeekday = (base: Date, weekdayIndex: number, weeksAgo: number): Date => {
-        // weekdayIndex: 0=domingo ... 6=sábado
         const d = new Date(base);
         const current = d.getDay();
         const diffToTarget = (current + 7 - weekdayIndex) % 7; // quantos dias atrás está o weekday desejado
@@ -322,12 +320,10 @@ export class DatabaseService {
         return d;
       };
 
-      // Configuração simples e realista
       const SEMANAS = 2;             // quantas semanas passadas considerar
       const SESSOES_POR_SEMANA = 2;  // quantos dias por semana esse treino foi feito (ex.: 2x/sem)
 
       for (const treino of treinos) {
-        // exercícios (com metas) desse treino
         const exRes = await db.query(
           'SELECT id_exercicio, series_meta, repeticao_meta, carga_meta FROM treino_exercicios WHERE id_treino = ?;',
           [treino.id_treino]
@@ -335,15 +331,13 @@ export class DatabaseService {
         const exercicios = exRes.values || [];
         if (!exercicios.length) continue;
 
-        // Escolhe 2 dias fixos da semana para este treino (ex.: Seg/Qui, Ter/Sex, Qua/Sab...)
-        // 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sab
         const todosDias = [1,2,3,4,5,6,0];
         const escolhidos = new Set<number>();
         while (escolhidos.size < SESSOES_POR_SEMANA) {
           const pick = todosDias[Math.floor(Math.random() * todosDias.length)];
           escolhidos.add(pick);
         }
-        const diasEscolhidos = Array.from(escolhidos); // ex.: [1,4] → segunda e quinta
+        const diasEscolhidos = Array.from(escolhidos); 
 
         // Para cada semana no passado e para cada dia escolhido, gera uma sessão completa
         for (let w = 0; w < SEMANAS; w++) {
@@ -356,8 +350,6 @@ export class DatabaseService {
               const repMeta   = ex.repeticao_meta ?? 0;
               const seriesMeta= ex.series_meta ?? 0;
 
-              // Variações realistas (para colorir success/warning/danger nas estatísticas)
-              // Faixas pensadas para gerar resultados às vezes acima, às vezes abaixo da meta
               const fCarga   = 0.65 + Math.random() * 0.5;  // 65% a 115% da meta
               const fRep     = 0.80 + Math.random() * 0.4;  // 80% a 120% da meta
               const fSeries  = 0.85 + Math.random() * 0.3;  // 85% a 115% da meta
@@ -390,7 +382,7 @@ export class DatabaseService {
         }
       }
 
-      console.log('[DB] Histórico populado com múltiplas execuções por treino (semanas recentes).');
+      console.log('[DB] Histórico de treinos populado.');
     } catch (err) {
       console.error('[DB] Erro ao popular histórico:', err);
     }
@@ -416,6 +408,8 @@ export class DatabaseService {
   await this.db.execute(insertTreinadores);
   console.log('[DB] Tabela "treinador" populada com sucesso.');
   }
+
+
 
 
   // Retorna os nomes dos treinos
@@ -471,98 +465,6 @@ export class DatabaseService {
     console.log('[DEBUG DB] getExerciciosPorTreino retornou (valores):', result.values);
     console.log(JSON.stringify(result, null, 2));
     return result.values || [];
-  }
-
-  // Adiciona um novo treino e retorna seu ID
-  async addTreino(nome_treino: string): Promise<number> {
-    if (!this.db) throw new Error('DB não aberto');
-
-    const result = await this.db.run(
-      `INSERT INTO treinos (nome_treino) VALUES (?)`,
-      [nome_treino]
-    );
-
-    console.log('[DB] Novo treino inserido:', nome_treino);
-
-    // Retorna o id_treino recém-criado
-    const idResult = await this.db.query('SELECT last_insert_rowid() as id_treino');
-    const id_treino = idResult.values?.[0]?.id_treino || null;
-
-    console.log('[DB] ID do treino criado:', id_treino);
-    return id_treino;
-  }
-
-  // Desabilita um treino
-  async desabilitarTreino(id_treino: number): Promise<void> {
-  if (!this.db) throw new Error('DB não aberto');
-
-  await this.db.run(
-    'UPDATE treinos SET ativo = 0 WHERE id_treino = ?',
-    [id_treino]
-  );
-
-  console.log('[DB] Treino desabilitado (soft delete), ID:', id_treino);
-  }
-  
-  // Adiciona um exercício a um treino específico
-  async addExercicioAoTreino(
-    id_treino: number,
-    id_exercicio: number,
-    series_meta: number,
-    repeticao_meta: number,
-    carga_meta: number
-  ): Promise<void> {
-    if (!this.db) throw new Error('DB não aberto');
-
-    await this.db.run(
-      `INSERT INTO treino_exercicios 
-        (id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta) 
-      VALUES (?, ?, ?, ?, ?)`,
-      [id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta]
-    );
-
-    console.log(`[DB] Exercício ${id_exercicio} vinculado ao treino ${id_treino}`);
-  }
-
-  // Registra uma entrada no histórico de treinos
-  async registrarHistorico(
-    id_treino: number,
-    id_exercicio: number,
-    carga_feita: number,
-    repeticao_feita: number,
-    series_feito: number,
-    carga_meta: number,
-    repeticao_meta: number,
-    series_meta: number
-  ): Promise<void> {
-    if (!this.db) throw new Error('DB não aberto');
-
-    // Data e dia da semana atuais
-    const data = new Date();
-    const dataStr = data.toISOString().split('T')[0]; // formato YYYY-MM-DD
-    const diaSemana = data.toLocaleDateString('pt-BR', { weekday: 'long' });
-
-    await this.db.run(
-      `INSERT INTO historico (
-        id_treino, id_exercicio, data, dia_semana,
-        carga_feita, repeticao_feita, series_feito,
-        carga_meta, repeticao_meta, series_meta
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        id_treino,
-        id_exercicio,
-        dataStr,
-        diaSemana,
-        carga_feita,
-        repeticao_feita,
-        series_feito,
-        carga_meta,
-        repeticao_meta,
-        series_meta
-      ]
-    );
-
-    console.log(`[DB] Histórico registrado para treino ${id_treino}, exercício ${id_exercicio}`);
   }
 
   async getUltimoTreinoPorDiaSemana(diaSemana: string) {
@@ -676,6 +578,101 @@ export class DatabaseService {
 
     const result = await this.db.query(query, [id_treino]);
     return result.values || [];
+  }
+
+
+
+  
+  // Adiciona um novo treino e retorna seu ID
+  async addTreino(nome_treino: string): Promise<number> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    const result = await this.db.run(
+      `INSERT INTO treinos (nome_treino) VALUES (?)`,
+      [nome_treino]
+    );
+
+    console.log('[DB] Novo treino inserido:', nome_treino);
+
+    // Retorna o id_treino recém-criado
+    const idResult = await this.db.query('SELECT last_insert_rowid() as id_treino');
+    const id_treino = idResult.values?.[0]?.id_treino || null;
+
+    console.log('[DB] ID do treino criado:', id_treino);
+    return id_treino;
+  }
+
+  // Desabilita um treino
+  async desabilitarTreino(id_treino: number): Promise<void> {
+  if (!this.db) throw new Error('DB não aberto');
+
+  await this.db.run(
+    'UPDATE treinos SET ativo = 0 WHERE id_treino = ?',
+    [id_treino]
+  );
+
+  console.log('[DB] Treino desabilitado (soft delete), ID:', id_treino);
+  }
+  
+  // Adiciona um exercício a um treino específico
+  async addExercicioAoTreino(
+    id_treino: number,
+    id_exercicio: number,
+    series_meta: number,
+    repeticao_meta: number,
+    carga_meta: number
+  ): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    await this.db.run(
+      `INSERT INTO treino_exercicios 
+        (id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta) 
+      VALUES (?, ?, ?, ?, ?)`,
+      [id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta]
+    );
+
+    console.log(`[DB] Exercício ${id_exercicio} vinculado ao treino ${id_treino}`);
+  }
+
+  // Registra uma entrada no histórico de treinos
+  async registrarHistorico(
+    id_treino: number,
+    id_exercicio: number,
+    carga_feita: number,
+    repeticao_feita: number,
+    series_feito: number,
+    carga_meta: number,
+    repeticao_meta: number,
+    series_meta: number
+  ): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    // Data e dia da semana atuais
+    const data = new Date();
+    const dataStr = data.toISOString().split('T')[0]; // formato YYYY-MM-DD
+    const diaSemana = data.toLocaleDateString('pt-BR', { weekday: 'long' });
+
+    await this.db.run(
+      `INSERT INTO historico (
+        id_treino, id_exercicio, data, dia_semana,
+        carga_feita, repeticao_feita, series_feito,
+        carga_meta, repeticao_meta, series_meta
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id_treino,
+        id_exercicio,
+        dataStr,
+        diaSemana,
+        carga_feita,
+        repeticao_feita,
+        series_feito,
+        carga_meta,
+        repeticao_meta,
+        series_meta
+      ]
+    );
+
+    console.log(`[DB] Histórico registrado para treino ${id_treino}, exercício ${id_exercicio}`);
   }
 
 

@@ -53,7 +53,7 @@ ion-title {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 16px;
-  color: var(--ion-color-primary);
+  color: #d0d0d0;
 }
 
 .exercicio-card {
@@ -69,6 +69,7 @@ ion-title {
   margin-bottom: 12px;
   text-align: center; /* centralizado */
   word-wrap: break-word;
+  color: #414141;
 }
 
 .exercicio-valores {
@@ -101,5 +102,6 @@ ion-title {
   border-radius: 8px;
   padding: 8px 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #555;
   cursor: pointer; /* indica que é clicável futuramente */
 }

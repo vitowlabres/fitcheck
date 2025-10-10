@@ -66,10 +66,9 @@
         <ion-card-title>{{ t.nome }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <p><strong>Cidade:</strong> {{ t.cidade }}</p>
-        <p><strong>UF:</strong> {{ t.UF }}</p>
-        <p><strong>Telefone:</strong> {{ t.telefone }}</p>
-        <p><strong>Email:</strong> {{ t.email }}</p>
+        <p><strong>{{ t.cidade }} - {{ t.UF }}</strong></p>
+        <p>{{ t.telefone }}</p>
+        <p>{{ t.email }}</p>
       </ion-card-content>
     </ion-card>
   </ion-list>

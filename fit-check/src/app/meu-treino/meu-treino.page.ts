@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { DatabaseService } from '../services/database.service';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController} from '@ionic/angular';
 import { PopUpTreinosComponent } from '../pop-up-treinos/pop-up-treinos.component';
 
 @Component({
@@ -32,7 +32,9 @@ export class MeuTreinoPage {
   constructor(
     private dbService: DatabaseService,
     private modalCtrl: ModalController,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private toastCtrl: ToastController
+  ) { }
 
   async ngOnInit() {
     await this.dbService.ready();
@@ -178,10 +180,34 @@ export class MeuTreinoPage {
     }
   }
 
-  finalizarCriacaoTreino() {
-    // Quando o treino for finalizado, o formulário de novo exercício é ocultado
-    this.idTreinoAtual = null;
-    console.log('[APP] Criação do treino finalizada.');
+  async finalizarCriacaoTreino() {
+    try {
+      if (!this.idTreinoAtual || !this.treinoSelecionado) {
+        console.warn('[APP] Nenhum treino ativo para finalizar.');
+        return;
+      }
+
+      const toast = await this.toastCtrl.create({
+        message: 'Treino criado com sucesso!',
+        duration: 2000,
+        color: 'success'
+      });
+            await toast.present();
+            
+      // Carrega os exercícios do treino recém-criado
+      this.exercicios = await this.dbService.getExerciciosPorTreino(this.idTreinoAtual);
+
+      // Oculta o formulário de adição de novo exercício
+      this.idTreinoAtual = null;
+
+      // Atualiza tela (força detecção manual por segurança)
+      this.cdr.detectChanges();
+
+      console.log('[APP] Criação do treino finalizada e exercícios carregados.');
+
+    } catch (err) {
+      console.error('[DB] Erro ao finalizar criação do treino:', err);
+    }
   }
 
 }

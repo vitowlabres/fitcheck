@@ -22,7 +22,7 @@
       <!-- <ion-card-content class="card-content-novo-treino"> -->
       <ion-item class="item-content-novo-treino">
         <ion-label class="label-box-nome-treino" position="floating"
-          >Nome do Treino</ion-label
+          >Nome do novo treino</ion-label
         >
         <ion-input #inputNovoTreino [(ngModel)]="novoTreinoNome"></ion-input>
       </ion-item>
@@ -47,20 +47,22 @@
     <!-- Formulário de adição de exercício -->
     <div *ngIf="idTreinoAtual" class="novo-exercicio-form ion-padding">
       <ion-item>
-        <ion-label position="floating">Exercício</ion-label>
-        <ion-select [(ngModel)]="novoExercicio.exercicio">
-          <ion-select-option
-            *ngFor="let ex of listaExercicios"
-            [value]="ex.id_exercicio"
-          >
-            {{ ex.nome_exercicio }}
-          </ion-select-option>
-        </ion-select>
+        <div class="meta-item">
+          <span class="label-metas" position="floating">Exercício</span>
+          <ion-select [(ngModel)]="novoExercicio.exercicio">
+            <ion-select-option
+              *ngFor="let ex of listaExercicios"
+              [value]="ex.id_exercicio"
+            >
+              {{ ex.nome_exercicio }}
+            </ion-select-option>
+          </ion-select>
+        </div>
       </ion-item>
-      <h3>Metas</h3>
+      <p class="metas">Metas</p>
       <div class="metas-container">
-        <ion-item class="meta-item">
-          <ion-label position="stacked" class="label-metas">Séries</ion-label>
+        <div class="meta-item">
+          <span class="label-metas">Séries</span>
           <ion-select [(ngModel)]="novoExercicio.series">
             <ion-select-option
               *ngFor="let s of [].constructor(50); let i = index"
@@ -68,9 +70,10 @@
               >{{ i + 1 }}</ion-select-option
             >
           </ion-select>
-        </ion-item>
-        <ion-item class="meta-item">
-          <ion-label position="stacked" class="label-metas">Reps</ion-label>
+        </div>
+
+        <div class="meta-item">
+          <span class="label-metas">Reps</span>
           <ion-select [(ngModel)]="novoExercicio.repeticoes">
             <ion-select-option
               *ngFor="let r of [].constructor(50); let i = index"
@@ -78,21 +81,23 @@
               >{{ i + 1 }}</ion-select-option
             >
           </ion-select>
-        </ion-item>
-        <ion-item class="meta-item">
-          <ion-label position="stacked" class="label-metas">Carga</ion-label>
+        </div>
+
+        <div class="meta-item">
+          <span class="label-metas">Peso (kg)</span>
           <ion-input
             type="number"
             [(ngModel)]="novoExercicio.carga"
             min="0"
           ></ion-input>
-        </ion-item>
+        </div>
       </div>
 
       <ion-item lines="none">
         <ion-button
           expand="block"
           color="medium"
+          class="btn-adicionar-exercicio"
           (click)="adicionarExercicioAoTreino()"
         >
           Adicionar exercício ao treino
@@ -124,7 +129,7 @@
             >
           </div>
           <div class="valor-item">
-            <span class="valor-label">Peso</span>
+            <span class="valor-label">Peso (kg)</span>
             <span class="valor-box"
               >{{ ex.carga_meta ?? ex.carga_feita ?? '-' }}</span
             >

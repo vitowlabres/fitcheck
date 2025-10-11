@@ -34,7 +34,7 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+// @import "@ionic/angular/css/palettes/dark.always.css";
 
 .pop-up-treinos-modal {
   --width: 90%;        
@@ -52,31 +52,41 @@
 :root {
   color-scheme: dark;
 
-  /* Cores principais do tema escuro */
-  --ion-background-color: #1e1e1e;
-  --ion-background-color-rgb: 30, 30, 30;
+  /* Cores base */
+  --ion-background-color: #1c1c1e;
+  --ion-background-color-rgb: 28, 28, 30;
 
-  --ion-text-color: #ffffff;
-  --ion-text-color-rgb: 255, 255, 255;
+  --ion-text-color: #f2f2f2;
+  --ion-text-color-rgb: 242, 242, 242;
 
-  --ion-toolbar-background: #2a2a2a;
+  /* Toolbar e cards */
+  --ion-toolbar-background: #2c2c2e;
   --ion-toolbar-color: #ffffff;
 
-  --ion-item-background: #2a2a2a;
-  --ion-item-color: #ffffff;
-
-  --ion-card-background: #2b2b2b;
+  --ion-card-background: #2f2f31;
   --ion-card-color: #ffffff;
 
-  --ion-color-primary: #3b82f6;
-  --ion-color-secondary: #6366f1;
+  /* Itens e inputs */
+  --ion-item-background: #2f2f31;
+  --ion-item-color: #ffffff;
+  --ion-color-step-50: #3a3a3c;
+  --ion-color-step-100: #48484a;
+
+  /* Cores de destaque */
+  --ion-color-primary: #4f46e5;
+  --ion-color-secondary: #06b6d4;
   --ion-color-tertiary: #10b981;
   --ion-color-success: #22c55e;
-  --ion-color-warning: #facc15;
+  --ion-color-warning: #eab308;
   --ion-color-danger: #ef4444;
-  --ion-color-medium: #6b7280;
-  --ion-color-light: #d1d5db;
+  --ion-color-medium: #a1a1aa;
+  --ion-color-light: #e5e7eb;
+
+  /* Bordas e efeitos */
+  --ion-border-color: #3a3a3c;
+  --ion-box-shadow-color: rgba(0, 0, 0, 0.4);
 }
+
 
 .alert-radio-label.sc-ion-alert-md,
 .alert-radio-label.sc-ion-alert-ios {

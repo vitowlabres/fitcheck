@@ -9,6 +9,7 @@
 ion-title {
   padding: 0;
   font-weight: bold;
+  color: #fff;
 }
 
 .icon-weight {
@@ -58,18 +59,16 @@ ion-title {
 
 .exercicio-card {
   margin-bottom: 12px;
-  --background: #f2f2f2; /* fundo cinza claro */
+  --background: #a8a8a8;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
-
 
 .nome-exercicio {
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 12px;
-  text-align: center; /* centralizado */
-  word-wrap: break-word;
+  text-align: center;
   color: #414141;
 }
 
@@ -99,7 +98,7 @@ ion-title {
   align-items: center;
   font-size: 1rem;
   font-weight: 600;
-  background: #ffffff;
+  background: #a8a8a8;
   border-radius: 8px;
   padding: 8px 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -111,60 +110,132 @@ ion-title {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh; /* centraliza verticalmente */
+  height: 100vh; /* garante centralização vertical total */
   padding: 0 16px;
 }
 
-.salvar-treino-btn {
-  margin-top: 12px;
-  --background: #f2f2f247 !important; /* mesma cor do background do exercicio-card */
-  color: #414141; /* cor similar ao texto do nome-exercicio */
+.treino-novo-card-center ion-card {
+  --background: #a8a8a8; /* cinza claro */
+  color: #414141;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 380px;
+  padding: 16px;
 }
+
+.treino-novo-card-center ion-item {
+  --background: transparent;
+  background: transparent;
+  --inner-background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.treino-novo-card-center ion-item::part(native),
+.treino-novo-card-center ion-item::part(container) {
+  background: #a8a8a8 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.treino-novo-card-center ion-input {
+  --background: transparent;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #414141;
+  padding: 8px;
+}
+
+.salvar-treino-btn {
+  margin-top: 16px;
+  --background: #a8a8a8;
+  color: #414141;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
 
 label-box-nome-treino{
   color: #414141;
-  --background: #f2f2f2
+  --background: #a8a8a8
 }
 
-h3{
+.metas {
   color: #414141;
-  font-size:1.5rem
-}
-
-.label-metas{
-  color: #414141;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 8px;
 }
 
 card-content-novo-treino{
-  --background: #f2f2f2; /* mesma cor do exercicio-card */
+  --background: #a8a8a8; /* mesma cor do exercicio-card */
+}
+
+.btn-adicionar-exercicio{
+  --color: black;
 }
 item-content-novo-treino{
-  --background: #f2f2f2; /* branco dentro do item */
+  --background: #a8a8a8; /* branco dentro do item */
 }
 
 ion-input {
-  --background: #ffffff; /* branco dentro do input */
+  --background: #a8a8a8; /* branco dentro do input */
   border-radius: 8px;
   padding: 0;
   color: #414141; /* cor do texto escura */
 }
 
 div.item-native::after{
-  --background: #f2f2f2 !important; /* mesma cor do exercicio-card */
-}
-
-.novo-exercicio-form ion-item {
-  margin-bottom: 10px;
+  --background: #a8a8a8 !important; /* mesma cor do exercicio-card */
 }
 
 .novo-exercicio-form {
-  background: #f7f7f7;
-  border-radius: 12px;
+  background: #a8a8a8; /* mesmo tom do exercicio-card */
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   padding: 16px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.novo-exercicio-form ion-item {
+  --background: transparent;
+  background: transparent;
+  --inner-background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.novo-exercicio-form ion-input,
+.novo-exercicio-form ion-select {
+  --background: transparent;
+  background: transparent;
+  --color: #414141;
+}
+
+.novo-exercicio-form ion-label,
+.treino-novo-card-center ion-label {
+  color: #414141;
+}
+.label-box-nome-treino{
+  color: #414141;
+}
+ion-select-option{
+  color: #414141;
+}
+
+.novo-exercicio-form h3 {
+  color: #414141;
+  font-size: 1.4rem;
+  margin-top: 12px;
+}
+
+ion-content {
+  --background: #1e1e1e; /* fundo geral preto */
 }
 
 /* --- Layout dos campos de metas lado a lado --- */
+
 .metas-container {
   display: flex;
   justify-content: space-between;
@@ -173,18 +244,49 @@ div.item-native::after{
 
 .meta-item {
   flex: 1;
-  min-width: 80px;
+  display: flex;
+  flex-direction: column; /* força o label em cima */
+  background: #a8a8a8;
+  border-radius: 8px;
+  padding: 6px 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .meta-item ion-select,
 .meta-item ion-input {
-  --background: #fff;
-  border-radius: 8px;
-  padding: 4px;
+  --background: transparent;
+  background: transparent;
+  --color: #414141;
+  border-radius: 6px;
+  border: 1px solid #c0c0c0;
   text-align: center;
+  font-size: 0.9rem;
+  height: 36px;
+}
+
+.label-metas {
+  font-weight: bold;
+  color: #414141;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+}
+
+.meta-item ion-label {
+  color: #414141;
+  font-weight: 600;
 }
 
 /* --- Quando o formulário for ocultado após finalizar treino --- */
 .novo-exercicio-form.oculto {
   display: none;
+}
+
+.btn-adicionar-exercicio::part(native) {
+  color: #000 !important; /* força o texto preto */
+}
+
+.btn-adicionar-exercicio {
+  --color: #000 !important; /* redundância para cobrir variações */
+  --background: #a8a8a8 !important; /* mantém o fundo coerente */
+  font-weight: 600;
 }

@@ -104,7 +104,6 @@ export class MeuTreinoPage {
         return;
       }
 
-      // o select já retorna id_exercicio diretamente (você definiu [value]="ex.id_exercicio")
       const idExercicio = exercicio;
 
       await this.dbService.addTreino_exercicios(
@@ -178,4 +177,11 @@ export class MeuTreinoPage {
       console.error('[DB] Erro ao criar novo treino:', err);
     }
   }
+
+  finalizarCriacaoTreino() {
+    // Quando o treino for finalizado, o formulário de novo exercício é ocultado
+    this.idTreinoAtual = null;
+    console.log('[APP] Criação do treino finalizada.');
+  }
+
 }

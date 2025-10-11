@@ -126,6 +126,14 @@ label-box-nome-treino{
   --background: #f2f2f2
 }
 
+h3{
+  color: #414141;
+}
+
+.label-metas{
+  color: #414141;
+}
+
 card-content-novo-treino{
   --background: #f2f2f2; /* mesma cor do exercicio-card */
 }
@@ -153,4 +161,29 @@ div.item-native::after{
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* --- Layout dos campos de metas lado a lado --- */
+.metas-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.meta-item {
+  flex: 1;
+  min-width: 80px;
+}
+
+.meta-item ion-select,
+.meta-item ion-input {
+  --background: #fff;
+  border-radius: 8px;
+  padding: 4px;
+  text-align: center;
+}
+
+/* --- Quando o formulário for ocultado após finalizar treino --- */
+.novo-exercicio-form.oculto {
+  display: none;
 }

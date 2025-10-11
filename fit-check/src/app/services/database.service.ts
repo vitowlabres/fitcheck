@@ -524,6 +524,23 @@ export class DatabaseService {
     console.log(`[DB] Exercício ${id_exercicio} vinculado ao treino ${id_treino}`);
   }
 
+  // Cria novo vínculo entre treino e exercício
+  async addTreino_exercicios(
+    id_treino: number,
+    id_exercicio: number,
+    series: number,
+    repeticoes: number,
+    carga: number
+  ): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+    await this.db.run(
+      `INSERT INTO treino_exercicios (id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta)
+      VALUES (?, ?, ?, ?, ?);`,
+      [id_treino, id_exercicio, series, repeticoes, carga]
+    );
+    console.log('[DB] Exercício adicionado ao treino:', { id_treino, id_exercicio, series, repeticoes, carga });
+  }
+
   // Registra uma entrada no histórico de treinos
   async registrarHistorico(
     id_treino: number,
@@ -663,6 +680,15 @@ export class DatabaseService {
     if (!this.db) throw new Error('DB não aberto');
     const res = await this.db.query('SELECT id_exercicio, nome_exercicio FROM exercicios;');
     return res.values || [];
+  }
+
+  async getIdExercicioByNome(nome: string): Promise<number | null> {
+    if (!this.db) throw new Error('DB não aberto');
+    const result = await this.db.query('SELECT id_exercicio FROM exercicios WHERE nome_exercicio = ?;', [nome]);
+    if (result.values && result.values.length > 0) {
+      return result.values[0].id_exercicio;
+    }
+    return null;
   }
 
   async getEvolucaoCargaPorTreino(id_treino: number) {

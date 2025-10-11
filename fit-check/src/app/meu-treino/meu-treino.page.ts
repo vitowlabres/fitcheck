@@ -74,21 +74,58 @@ export class MeuTreinoPage {
   }
 
   async desabilitarTreino(nome_treino: string) {
-  await this.dbService.ready();
-  try {
-    const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
-    if (!id_treino) {
-      console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
-      return;
+    await this.dbService.ready();
+    try {
+      const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
+      if (!id_treino) {
+        console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
+        return;
+      }
+
+      await this.dbService.desabilitarTreino(id_treino);
+      this.treinos = this.treinos.filter(t => t !== nome_treino);
+
+    } catch (err) {
+      console.error('[DB] Erro ao desabilitar treino:', err);
     }
-
-    await this.dbService.desabilitarTreino(id_treino);
-    this.treinos = this.treinos.filter(t => t !== nome_treino);
-
-  } catch (err) {
-    console.error('[DB] Erro ao desabilitar treino:', err);
   }
-}
+
+  async adicionarExercicioAoTreino() {
+    try {
+      if (!this.idTreinoAtual) {
+        console.warn('[APP] Nenhum treino selecionado.');
+        return;
+      }
+
+      const { exercicio, series, repeticoes, carga } = this.novoExercicio;
+
+      if (!exercicio || !series || !repeticoes || carga === null || carga === undefined) {
+        console.warn('[APP] Campos incompletos para adicionar exercício.');
+        return;
+      }
+
+      // o select já retorna id_exercicio diretamente (você definiu [value]="ex.id_exercicio")
+      const idExercicio = exercicio;
+
+      await this.dbService.addTreino_exercicios(
+        this.idTreinoAtual,
+        idExercicio,
+        series,
+        repeticoes,
+        carga
+      );
+
+      // recarrega lista de exercícios do treino
+      this.exercicios = await this.dbService.getExerciciosPorTreino(this.idTreinoAtual);
+
+      // limpa campos
+      this.novoExercicio = { exercicio: null, series: null, repeticoes: null, carga: null };
+
+      console.log('[APP] Exercício adicionado com sucesso!');
+    } catch (err) {
+      console.error('[DB] Erro ao adicionar exercício ao treino:', err);
+    }
+  }
 
   async abrirModal() {
     const modal = await this.modalCtrl.create({

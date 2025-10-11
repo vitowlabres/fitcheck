@@ -38,7 +38,6 @@ ion-card-subtitle {
   margin: 20px;
 }
 
-/* Avatar e textos centralizados */
 .profile-content {
   display: flex;
   flex-direction: column;
@@ -55,7 +54,9 @@ ion-card-subtitle {
   align-items: center;
   margin: 5px auto 15px auto;
   overflow: hidden;
-  background-color: #f2f2f2; /* fundo cinza claro */
+  background-color: #f2f2f2;
+  object-fit: cover;           
+  object-position: center;
 }
 
 .avatar-photo {
@@ -68,17 +69,79 @@ ion-card-subtitle {
   box-shadow: none;
   text-align: center;
   background: none;
+  background-color: #2b2b2b;
+  border-radius: 8px;
+  padding: 12px;
+  color: #fff;
+  margin-top: 12px;  
 }
 
 .user-info ion-card-title {
   margin: 0;
   font-size: 1rem;
-  color: #222;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  color: #fff;
 }
 
 .user-info ion-card-subtitle {
   margin: 8px 0;
   color: #3c3c3c;
+}
+
+.edit-icon {
+  font-size: 22px;
+  color: #3b82f6;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.edit-icon:hover {
+  transform: scale(1.2);
+}
+
+.user-info p {
+  margin: 6px 0;
+  color: #ddd;
+}
+
+.edit-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.user-info ion-item {
+  --background: #242424;
+  --color: #ffffff;
+  margin-top: 4px;
+  border-radius: 6px;
+}
+
+.user-info ion-item {
+  --background: #2b2b2b; /* mantém fundo escuro */
+  --color: #ffffff; /* cor do texto e ícones */
+  --placeholder-color: #bbbbbb;
+  --highlight-color-focused: #3b82f6; /* cor da linha ativa */
+  border-radius: 6px;
+}
+
+/* Rótulo (ex: Nome, Idade, etc.) */
+.user-info ion-label {
+  color: #cccccc !important;
+}
+
+/* Texto digitado dentro do input */
+.user-info ion-input {
+  color: #ffffff !important;
+}
+
+/* Ícones dentro dos itens, caso existam */
+.user-info ion-icon {
+  color: #ffffff !important;
 }
 
 /* ===== Filtros ===== */

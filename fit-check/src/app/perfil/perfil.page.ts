@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { DatabaseService } from '../services/database.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { ActionSheetController } from '@ionic/angular';																		   
+import { ActionSheetController, AlertController  } from '@ionic/angular';																		   
 
 @Component({
   selector: 'app-perfil',
@@ -19,9 +19,18 @@ export class PerfilPage implements OnInit {
   treinadoresFiltrados: any[] = [];
   cidades: string[] = [];
   ufs: string[] = [];
-  fotoPerfil: string | null = null;								   
+  fotoPerfil: string | null = null;	
+  modoEdicao = false;				
+  nome: string = 'Rafael Fuchs';
+  idade: number | null = 38;
+  tempoUso: string = '6 meses';
+  email: string = 'rafael@email.com';			   
 
-  constructor(private dbService: DatabaseService, private actionSheetCtrl: ActionSheetController) {}
+  constructor(
+    private dbService: DatabaseService, 
+    private actionSheetCtrl: ActionSheetController,
+    private alertController: AlertController,
+  ) {}
 
   async ngOnInit() {
     await this.dbService.ready();
@@ -33,6 +42,7 @@ export class PerfilPage implements OnInit {
 
     // exibe todos inicialmente
     this.treinadoresFiltrados = [...this.treinadores];
+
   }
 
   aplicarFiltros() {
@@ -79,6 +89,9 @@ export class PerfilPage implements OnInit {
   }
 
   async escolherFoto() {
+    const permitido = await this.verificarPermissaoGaleria();
+    if (!permitido) return;
+
     try {
       const image = await Camera.getPhoto({
         quality: 90,
@@ -94,18 +107,82 @@ export class PerfilPage implements OnInit {
   }
 
   async tirarFoto() {
+    const permitido = await this.verificarPermissaoCamera();
+    if (!permitido) return;
+
     try {
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
         resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera, // 📸 abre a câmera
+        source: CameraSource.Camera,
       });
 
       this.fotoPerfil = image.dataUrl ?? null;
     } catch (error) {
       console.log('Erro ao tirar foto:', error);
     }
+  }
+
+  async verificarPermissaoCamera(): Promise<boolean> {
+    const status = await Camera.checkPermissions();
+
+    if (status.camera === 'granted') {
+      return true;
+    }
+
+    if (status.camera === 'denied') {
+      this.mostrarAlertaPermissao('câmera');
+      return false;
+    }
+
+    const novoStatus = await Camera.requestPermissions();
+    return novoStatus.camera === 'granted';
+  }
+
+  async verificarPermissaoGaleria(): Promise<boolean> {
+    const status = await Camera.checkPermissions();
+
+    if (status.photos === 'granted') {
+      return true;
+    }
+
+    if (status.photos === 'denied') {
+      this.mostrarAlertaPermissao('galeria');
+      return false;
+    }
+
+    const novoStatus = await Camera.requestPermissions();
+    return novoStatus.photos === 'granted';
+  }
+
+  async mostrarAlertaPermissao(tipo: string) {
+    const alert = await this.alertController.create({
+      header: 'Permissão necessária',
+      message: `O aplicativo precisa de permissão para acessar a ${tipo}. Vá até as configurações e conceda acesso.`,
+      buttons: ['OK'],
+    });
+    await alert.present();
+  }
+
+
+  editarPerfil() {
+    this.modoEdicao = true;
+  }
+
+  cancelarEdicao() {
+    this.modoEdicao = false;
+  }
+
+  salvarPerfil() {
+    console.log('Perfil salvo:', {
+      nome: this.nome,
+      idade: this.idade,
+      tempoUso: this.tempoUso,
+      email: this.email,
+    });
+
+    this.modoEdicao = false;
   }
 
 }

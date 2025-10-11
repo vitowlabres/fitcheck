@@ -13,9 +13,19 @@ export class MeuTreinoPage {
 
   treinos: string[] = [];
   exercicios: any[] = [];
-  treinoSelecionado: string | null = null; 
+  treinoSelecionado: string | null = null;
   criandoTreino: boolean = false;
   novoTreinoNome: string = '';
+  idTreinoAtual: number | null = null;
+
+    // Campos do formulário de adição de exercício
+  novoExercicio: any = {
+    exercicio: null,
+    series: null,
+    repeticoes: null,
+    carga: null
+  };
+  listaExercicios: any[] = [];
 
    @ViewChild('inputNovoTreino', { static: false }) inputNovoTreino!: ElementRef;
 
@@ -31,45 +41,37 @@ export class MeuTreinoPage {
 
   async carregarTreinos() {
     try {
-      console.log('[DB] Carregando treinos...');
       this.treinos = await this.dbService.getTreinos();
-      console.log('[DB] Treinos carregados:', this.treinos);
-      // aqui você pode passar `this.treinos` para o popup/modal
     } catch (err) {
       console.error('[DB] Erro ao buscar treinos:', err);
     }
   }
 
-  async selecionarTreino(nome_treino: string, id_treino?: number): Promise<void> {
-  console.log('[DEBUG] selecionarTreino chamado com:', { nome_treino, id_treino });
-
-  try {
-    if (!id_treino) {
-      id_treino = await this.dbService.getIdTreinoByNome(nome_treino) ?? undefined;
-      console.log('[DEBUG] id_treino obtido do DB:', id_treino);
-
-      if (!id_treino) {
-        console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
-        this.exercicios = [];
-        this.treinoSelecionado = null;
-        this.cdr.detectChanges();
-        return;
-      }
+  async buscarIdTreinoPorNome(nome: string): Promise<number | null> {
+    try {
+      const id = await this.dbService.getIdTreinoByNome(nome);
+      this.idTreinoAtual = id ?? null;
+      console.log('[DEBUG] ID do treino encontrado:', this.idTreinoAtual);
+      return this.idTreinoAtual;
+    } catch (err) {
+      console.error('[DB] Erro ao buscar ID do treino:', err);
+      return null;
     }
-
-    this.treinoSelecionado = nome_treino;
-    this.exercicios = await this.dbService.getExerciciosPorTreino(id_treino);
-    console.log('[DEBUG] Exercícios carregados:', this.exercicios);
-
-    this.cdr.detectChanges();
-  } catch (err) {
-    console.error('[DB] Erro ao carregar exercícios:', err);
-    this.exercicios = [];
-    this.treinoSelecionado = null;
-    this.cdr.detectChanges();
   }
-}
 
+  async selecionarTreino(nome_treino: string, id_treino?: number): Promise<void> {
+    try {
+      if (!id_treino) {
+        id_treino = await this.dbService.getIdTreinoByNome(nome_treino) ?? undefined;
+        if (!id_treino) return;
+      }
+      this.treinoSelecionado = nome_treino;
+      this.exercicios = await this.dbService.getExerciciosPorTreino(id_treino);
+      this.cdr.detectChanges();
+    } catch (err) {
+      console.error('[DB] Erro ao carregar exercícios:', err);
+    }
+  }
 
   async desabilitarTreino(nome_treino: string) {
   await this.dbService.ready();
@@ -113,48 +115,30 @@ export class MeuTreinoPage {
   criarTreino() {
     this.criandoTreino = true;
     this.novoTreinoNome = '';
-    this.exercicios = []; // opcional: esconde lista de exercícios
+    this.exercicios = [];
 
-    // Delay para garantir que o card já foi renderizado
     setTimeout(() => {
-      if (this.inputNovoTreino?.nativeElement) {
-        this.inputNovoTreino.nativeElement.focus(); // força abrir teclado
-      }
+      this.inputNovoTreino?.nativeElement?.focus();
     }, 300);
   }
 
   async salvarNomeTreino() {
-    const nome = this.novoTreinoNome?.trim();
+    const nome = this.novoTreinoNome.trim();
     if (!nome) return;
 
     try {
       await this.dbService.ready();
-
-      // Cria o treino no banco e obtém o ID
       const id_treino = await this.dbService.addTreino(nome);
-
-      // Limpa input e variável
-      this.novoTreinoNome = '';
-      if (this.inputNovoTreino?.nativeElement) {
-        this.inputNovoTreino.nativeElement.value = '';
-      }
-
-      // Atualiza as variáveis locais
       this.treinoSelecionado = nome;
-      this.exercicios = []; // inicia sem exercícios
       this.criandoTreino = false;
-
-      // Atualiza a lista de treinos ativos
       await this.carregarTreinos();
+      await this.buscarIdTreinoPorNome(nome);
 
-      // Seleciona automaticamente o treino recém-criado
-      await this.selecionarTreino(nome, id_treino);
-
-      console.log('[DEBUG] Treino criado e selecionado:', { nome, id_treino });
+      // carrega exercícios possíveis para o dropdown
+      this.listaExercicios = await this.dbService.getExercicios();
+      console.log('[DEBUG] Lista de exercícios para seleção:', this.listaExercicios);
     } catch (err) {
       console.error('[DB] Erro ao criar novo treino:', err);
     }
   }
-
-
 }

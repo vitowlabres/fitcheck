@@ -659,6 +659,12 @@ export class DatabaseService {
     return result.values || [];
   }
 
+  async getExercicios(): Promise<any[]> {
+    if (!this.db) throw new Error('DB não aberto');
+    const res = await this.db.query('SELECT id_exercicio, nome_exercicio FROM exercicios;');
+    return res.values || [];
+  }
+
   async getEvolucaoCargaPorTreino(id_treino: number) {
     if (!this.db) throw new Error('DB não aberto');
 

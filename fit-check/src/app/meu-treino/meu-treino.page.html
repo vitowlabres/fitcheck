@@ -44,6 +44,51 @@
   >
     <h2 class="treino-title">{{ treinoSelecionado }}</h2>
 
+    <!-- Formulário de adição de exercício -->
+    <div *ngIf="idTreinoAtual" class="novo-exercicio-form ion-padding">
+      <ion-item>
+        <ion-label position="floating">Exercício</ion-label>
+        <ion-select [(ngModel)]="novoExercicio.exercicio">
+          <ion-select-option
+            *ngFor="let ex of listaExercicios"
+            [value]="ex.id_exercicio"
+          >
+            {{ ex.nome_exercicio }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Séries</ion-label>
+        <ion-select [(ngModel)]="novoExercicio.series">
+          <ion-select-option
+            *ngFor="let s of [].constructor(50); let i = index"
+            [value]="i + 1"
+            >{{ i + 1 }}</ion-select-option
+          >
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Repetições</ion-label>
+        <ion-select [(ngModel)]="novoExercicio.repeticoes">
+          <ion-select-option
+            *ngFor="let r of [].constructor(50); let i = index"
+            [value]="i + 1"
+            >{{ i + 1 }}</ion-select-option
+          >
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Carga (kg)</ion-label>
+        <ion-input
+          type="number"
+          [(ngModel)]="novoExercicio.carga"
+          min="0"
+        ></ion-input>
+      </ion-item>
+    </div>
     <ion-card *ngFor="let ex of exercicios" class="exercicio-card">
       <ion-card-content>
         <h3 class="nome-exercicio">{{ ex.nome_exercicio }}</h3>

@@ -143,3 +143,14 @@ ion-input {
 div.item-native::after{
   --background: #f2f2f2 !important; /* mesma cor do exercicio-card */
 }
+
+.novo-exercicio-form ion-item {
+  margin-bottom: 10px;
+}
+
+.novo-exercicio-form {
+  background: #f7f7f7;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}

@@ -92,3 +92,63 @@
 .alert-radio-label.sc-ion-alert-ios {
   color: #ffffff !important; /* branco, mantém o restante do popup padrão */
 }
+
+/* === Estilo global dark para Action Sheet (Ionic 7+) === */
+ion-action-sheet {
+  /* fundo geral */
+  --background: #2a2a2a !important;
+  --backdrop-opacity: 0.6;
+
+  /* botões principais */
+  --button-background: #2a2a2a !important;
+  --button-background-selected: #3b82f6 !important;
+  --button-color: #ffffff !important;
+  --button-color-selected: #ffffff !important;
+
+  /* botão cancelar */
+  --cancel-button-color: #f87171 !important;
+  --cancel-button-background: #2a2a2a !important;
+  --cancel-button-background-selected: #ef4444 !important;
+
+  /* título e mensagem */
+  --title-color: #ffffff !important;
+  --message-color: #cccccc !important;
+
+  /* bordas e divisores */
+  --border-color: #3b3b3b;
+}
+
+/* fundo dos grupos */
+ion-action-sheet .action-sheet-group,
+ion-action-sheet .action-sheet-group-cancel {
+  background: #2a2a2a !important;
+}
+
+/* texto branco e ícones */
+ion-action-sheet button,
+ion-action-sheet .action-sheet-button {
+  color: #ffffff !important;
+}
+
+ion-action-sheet .action-sheet-button .action-sheet-icon {
+  color: #ffffff !important;
+}
+
+/* hover / foco */
+ion-action-sheet .action-sheet-button:hover,
+ion-action-sheet .action-sheet-button.ion-focused {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+/* botão cancelar destacado */
+ion-action-sheet .action-sheet-group-cancel button {
+  color: #f87171 !important;
+  font-weight: 600;
+}
+
+ion-action-sheet .action-sheet-group-cancel button:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+

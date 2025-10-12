@@ -27,10 +27,49 @@
       </div>
 
       <ion-card class="user-info">
-        <ion-card-title>Nome</ion-card-title>
-        <ion-card-subtitle>Idade</ion-card-subtitle>
-        <ion-card-subtitle>Tempo de uso</ion-card-subtitle>
-        <ion-card-subtitle>email@email.com</ion-card-subtitle>
+        <ion-card-header>
+          <ion-card-title>
+            Informações do Usuário
+            <ion-icon
+              name="create-outline"
+              class="edit-icon"
+              (click)="editarPerfil()"
+            ></ion-icon>
+          </ion-card-title>
+        </ion-card-header>
+
+        <!-- Modo visualização -->
+        <ion-card-content *ngIf="!modoEdicao; else editarCampos">
+          <p><strong>Nome:</strong> {{ nome || 'Não informado' }}</p>
+          <p><strong>Idade:</strong> {{ idade || 'Não informada' }}</p>
+          <p><strong>Tempo de uso:</strong> {{ tempoUso || 'Não informado' }}</p>
+          <p><strong>Email:</strong> {{ email || 'Não informado' }}</p>
+        </ion-card-content>
+
+        <!-- Modo edição -->
+        <ng-template #editarCampos>
+          <ion-item>
+            <ion-label position="floating">Nome</ion-label>
+            <ion-input [(ngModel)]="nome"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Idade</ion-label>
+            <ion-input type="number" [(ngModel)]="idade"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Tempo de uso</ion-label>
+            <ion-input [(ngModel)]="tempoUso"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Email</ion-label>
+            <ion-input type="email" [(ngModel)]="email"></ion-input>
+          </ion-item>
+
+          <div class="edit-buttons">
+            <ion-button color="success" (click)="salvarPerfil()">Salvar</ion-button>
+            <ion-button color="medium" (click)="cancelarEdicao()">Cancelar</ion-button>
+          </div>
+        </ng-template>
       </ion-card>
     </div>
   </ion-card>

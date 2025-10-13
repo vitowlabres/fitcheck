@@ -114,12 +114,16 @@ ion-title {
   max-width: 65px;
 }
 
+.valor-box-feitos{
+  color: #e1e1e1;
+}
+
 .treino-novo-card-center {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh; /* garante centralização vertical total */
-  padding: 0 16px;
+  align-items: flex-start; /* começa do topo do container */
+  height: 100vh;
+  padding: 270px 16px 0 16px; /* distância do topo */
 }
 
 .treino-novo-card-center ion-card {

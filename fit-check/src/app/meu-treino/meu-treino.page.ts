@@ -71,6 +71,13 @@ export class MeuTreinoPage {
       this.idTreinoAtual = id_treino;
       this.treinoSelecionado = nome_treino;
       this.exercicios = await this.dbService.getExerciciosPorTreino(id_treino);
+
+      // **Inicializa campos 'Feitos' com os valores de meta**
+      this.exercicios.forEach(ex => {
+        ex.series_feito = ex.series_feito ?? ex.series_meta;
+        ex.repeticao_feita = ex.repeticao_feita ?? ex.repeticao_meta;
+        ex.carga_feita = ex.carga_feita ?? ex.carga_meta;
+      });
       this.cdr.detectChanges();
     } catch (err) {
       console.error('[DB] Erro ao carregar exercícios:', err);
@@ -203,6 +210,12 @@ export class MeuTreinoPage {
 
       // Oculta o formulário de adição de novo exercício
       this.idTreinoAtual = null;
+
+      this.exercicios.forEach(ex => {
+        ex.series_feito = ex.series_feito ?? ex.series_meta;
+        ex.repeticao_feita = ex.repeticao_feita ?? ex.repeticao_meta;
+        ex.carga_feita = ex.carga_feita ?? ex.carga_meta;
+      });
 
       // Atualiza tela (força detecção manual por segurança)
       this.cdr.detectChanges();

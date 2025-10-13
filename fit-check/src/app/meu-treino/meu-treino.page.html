@@ -137,7 +137,10 @@
         <div class="exercicio-valores feitos">
           <div class="valor-item">
             <span class="valor-label">Séries</span>
-            <ion-select class="valor-box" [(ngModel)]="ex.series_feito">
+            <ion-select
+              class="valor-box valor-box-feitos"
+              [(ngModel)]="ex.series_feito"
+            >
               <ion-select-option
                 *ngFor="let s of [].constructor(50); let i = index"
                 [value]="i + 1"
@@ -147,7 +150,10 @@
           </div>
           <div class="valor-item">
             <span class="valor-label">Reps</span>
-            <ion-select class="valor-box" [(ngModel)]="ex.repeticao_feita">
+            <ion-select
+              class="valor-box valor-box-feitos"
+              [(ngModel)]="ex.repeticao_feita"
+            >
               <ion-select-option
                 *ngFor="let r of [].constructor(50); let i = index"
                 [value]="i + 1"
@@ -158,7 +164,7 @@
           <div class="valor-item">
             <span class="valor-label">Peso (kg)</span>
             <ion-input
-              class="valor-box"
+              class="valor-box valor-box-feitos"
               type="number"
               min="0"
               [(ngModel)]="ex.carga_feita"

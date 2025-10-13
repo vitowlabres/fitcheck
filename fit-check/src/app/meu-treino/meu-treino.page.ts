@@ -210,7 +210,7 @@ export class MeuTreinoPage {
         duration: 2000,
         color: 'success'
       });
-            await toast.present();
+      await toast.present();
             
       // Carrega os exercícios do treino recém-criado
       this.exercicios = await this.dbService.getExerciciosPorTreino(this.idTreinoAtual);
@@ -267,6 +267,14 @@ export class MeuTreinoPage {
         ex.series_meta || 0
       );
     }
+
+    const toast = await this.toastCtrl.create({
+      message: 'O seu treino foi registrado!',
+      duration: 2000,
+      color: 'success'
+    });
+    await toast.present();
+    
 
     console.log('✅ Histórico registrado com sucesso!');
   }

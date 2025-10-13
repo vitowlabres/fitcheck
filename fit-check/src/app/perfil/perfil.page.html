@@ -20,7 +20,7 @@
         />
 
         <ng-template #iconePadrao>
-          <ion-button class="avatar" (click)="selecionarFoto()">
+          <ion-button class="avatar" (click)="selecionarFoto()" color="light">
             <ion-icon name="camera-outline"></ion-icon>
           </ion-button>
         </ng-template>
@@ -42,7 +42,9 @@
         <ion-card-content *ngIf="!modoEdicao; else editarCampos">
           <p><strong>Nome:</strong> {{ nome || 'Não informado' }}</p>
           <p><strong>Idade:</strong> {{ idade || 'Não informada' }}</p>
-          <p><strong>Tempo de uso:</strong> {{ tempoUso || 'Não informado' }}</p>
+          <p>
+            <strong>Tempo de uso:</strong> {{ tempoUso || 'Não informado' }}
+          </p>
           <p><strong>Email:</strong> {{ email || 'Não informado' }}</p>
         </ion-card-content>
 
@@ -66,8 +68,12 @@
           </ion-item>
 
           <div class="edit-buttons">
-            <ion-button color="success" (click)="salvarPerfil()">Salvar</ion-button>
-            <ion-button color="medium" (click)="cancelarEdicao()">Cancelar</ion-button>
+            <ion-button color="success" (click)="salvarPerfil()"
+              >Salvar</ion-button
+            >
+            <ion-button color="medium" (click)="cancelarEdicao()"
+              >Cancelar</ion-button
+            >
           </div>
         </ng-template>
       </ion-card>

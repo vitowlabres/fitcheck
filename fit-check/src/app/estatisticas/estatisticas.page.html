@@ -10,10 +10,11 @@
 <ion-content [fullscreen]="true">
   <!--  Botões dos dias da semana -->
   <div class="dias-semana">
-    <ion-button 
+    <ion-button
       *ngFor="let dia of diasSemana"
       [color]="getCorDoDia(dia)"
-      (click)="selecionarDia(dia)">
+      (click)="selecionarDia(dia)"
+    >
       {{ dia | slice:0:3 | titlecase }}
     </ion-button>
   </div>
@@ -42,14 +43,19 @@
   </ion-item>
 
   <!--  Barra de progresso geral -->
-  <div *ngIf="nomeTreino">
-    <ion-progress-bar [value]="progressoGeral / 100" [color]="progressoCor"></ion-progress-bar>
-    <p class="percentual">{{ progressoGeral | number:'1.0-0' }}%</p>
+  <div class="barra-progresso" *ngIf="nomeTreino">
+    <div class="progress-wrapper">
+      <ion-progress-bar
+        [value]="progressoGeral / 100"
+        [color]="progressoCor"
+      ></ion-progress-bar>
+      <p class="percentual">{{ progressoGeral | number:'1.0-0' }}%</p>
+    </div>
   </div>
 
   <!-- Gráfico de linha “evolução de carga” -->
   <div class="grafico-container">
+    <!-- <p class="container-label">Progressão de carga</p> -->
     <canvas id="graficoEvolucaoCarga"></canvas>
   </div>
-
 </ion-content>

@@ -171,11 +171,15 @@ export class EstatisticasPage implements OnInit {
           label: 'Feito (rep)',
           data: feitos,
           backgroundColor: 'rgba(54,162,235,0.8)',
+          borderRadius: 12,
+          borderSkipped: false, 
         },
         {
           label: 'Meta (rep)',
           data: metas,
-          backgroundColor: 'rgba(255,99,132,0.6)',
+          backgroundColor: 'rgba(25, 203, 120, 1)',
+          borderRadius: 12,
+          borderSkipped: false, 
         },
       ],
     };
@@ -264,7 +268,7 @@ export class EstatisticasPage implements OnInit {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: 'bottom' },
+          legend: { position: 'top' },
         },
         scales: {
           y: { beginAtZero: true },

@@ -402,16 +402,20 @@ export class DatabaseService {
   const insertTreinadores = `
     INSERT INTO treinador (nome, telefone, email, cidade, UF) VALUES
       ('Lucas Silva', '(11) 98877-1234', 'lucas.silva@exemplo.com', 'São Paulo', 'SP'),
+      ('Beatriz Almeida', '(11) 99711-2233', 'beatriz.almeida@exemplo.com', 'São Paulo', 'SP'),
+      ('Henrique Castro', '(11) 99622-3344', 'henrique.castro@exemplo.com', 'São Paulo', 'SP'),
       ('Mariana Oliveira', '(21) 99766-4321', 'mariana.oliveira@exemplo.com', 'Rio de Janeiro', 'RJ'),
-      ('Rafael Souza', '(31) 99855-9876', 'rafael.souza@exemplo.com', 'Belo Horizonte', 'MG'),
+      ('André Barbosa', '(21) 99877-5566', 'andre.barbosa@exemplo.com', 'Rio de Janeiro', 'RJ'),
+      ('Larissa Mello', '(21) 99988-6677', 'larissa.mello@exemplo.com', 'Rio de Janeiro', 'RJ'),
       ('Fernanda Costa', '(41) 99644-5566', 'fernanda.costa@exemplo.com', 'Curitiba', 'PR'),
-      ('Tiago Santos', '(71) 99533-7788', 'tiago.santos@exemplo.com', 'Salvador', 'BA'),
-      ('Carla Pereira', '(51) 99422-6677', 'carla.pereira@exemplo.com', 'Porto Alegre', 'RS'),
-      ('Pedro Gomes', '(61) 99311-4455', 'pedro.gomes@exemplo.com', 'Brasília', 'DF'),
-      ('Ana Lima', '(81) 99200-8899', 'ana.lima@exemplo.com', 'Recife', 'PE'),
-      ('Rodrigo Ribeiro', '(85) 99199-7788', 'rodrigo.ribeiro@exemplo.com', 'Fortaleza', 'CE'),
-      ('Juliana Martins', '(48) 99088-6677', 'juliana.martins@exemplo.com', 'Florianópolis', 'SC');
+      ('Rafael Souza', '(41) 99555-7788', 'rafael.souza@exemplo.com', 'Curitiba', 'PR'),
+      ('Juliana Nunes', '(41) 99466-8899', 'juliana.nunes@exemplo.com', 'Londrina', 'PR'),      ('Juliana Martins', '(48) 99088-6677', 'juliana.martins@exemplo.com', 'Florianópolis', 'SC'),
+      ('Pedro Henrique', '(48) 99177-5566', 'pedro.henrique@exemplo.com', 'Florianópolis', 'SC'),
+      ('Carla Mendes', '(48) 99266-3344', 'carla.mendes@exemplo.com', 'Novo Hamburgo', 'RS'),      ('Carla Pereira', '(51) 99422-6677', 'carla.pereira@exemplo.com', 'Porto Alegre', 'RS'),
+      ('Rodrigo Ferreira', '(51) 99533-7788', 'rodrigo.ferreira@exemplo.com', 'Guaíba', 'RS'),
+      ('Ana Paula', '(51) 99644-8899', 'ana.paula@exemplo.com', 'Porto Alegre', 'RS');
   `;
+
 
   await this.db.execute(insertTreinadores);
   console.log('[DB] Tabela "treinador" populada com sucesso.');

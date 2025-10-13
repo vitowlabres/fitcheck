@@ -17,12 +17,14 @@ ion-title {
   height: 300px;
 }
 
-.footer-buttons {
+.floating-footer {
+  position: fixed; /* fixa na tela */
+  bottom: 16px; /* distância da borda inferior */
+  right: 16px; /* alinhado à direita */
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding: 16px;
-  gap: 12px;
+  flex-direction: column; /* botões empilhados */
+  gap: 12px; /* espaçamento entre botões */
+  z-index: 100; /* fica acima do conteúdo */
 }
 
 .round-btn {
@@ -74,7 +76,9 @@ ion-title {
 
 .exercicio-valores {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 12px;
   gap: 12px;
 }
 
@@ -104,6 +108,10 @@ ion-title {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: #555;
   cursor: pointer; /* indica que é clicável futuramente */
+  min-height: 50px;
+  max-height: 50px;
+  min-width: 65px;
+  max-width: 65px;
 }
 
 .treino-novo-card-center {
@@ -167,6 +175,7 @@ label-box-nome-treino{
   font-weight: bold;
   font-size: 1rem;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 card-content-novo-treino{
@@ -289,4 +298,38 @@ ion-content {
   --color: #000 !important; /* redundância para cobrir variações */
   --background: #a8a8a8 !important; /* mantém o fundo coerente */
   font-weight: 600;
+}
+
+.exercicio-card-title{
+  color: #414141;
+  font-weight: bolder;
+  text-align: center;
+}
+
+.exercicio-card-title-feitos{
+  border-top: 2px solid #414141;
+  margin: 10px;
+}
+
+ion-select.valor-box::part(text),
+ion-input.valor-box::part(native) {
+  text-align: center;
+  justify-content: center;
+}
+
+.registrar-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 200;
+}
+
+.registrar-btn {
+  --background: #28a745; /* verde */
+  --color: #fff;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 12px;
+  margin: 8px 16px;
+  height: 56px;
 }

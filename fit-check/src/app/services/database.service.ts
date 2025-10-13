@@ -455,6 +455,7 @@ export class DatabaseService {
 
     const query = `
       SELECT 
+        e.id_exercicio,
         e.nome_exercicio, 
         e.grupo_muscular,
         te.series_meta, 

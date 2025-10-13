@@ -16,6 +16,7 @@ export class MeuTreinoPage {
   treinoSelecionado: string | null = null;
   criandoTreino: boolean = false;
   novoTreinoNome: string = '';
+  treinoEmCriacao: boolean = false; // indica se estamos no processo de criação de um novo treino
   idTreinoAtual: number | null = null;
 
     // Campos do formulário de adição de exercício
@@ -67,6 +68,7 @@ export class MeuTreinoPage {
         id_treino = await this.dbService.getIdTreinoByNome(nome_treino) ?? undefined;
         if (!id_treino) return;
       }
+      this.idTreinoAtual = id_treino;
       this.treinoSelecionado = nome_treino;
       this.exercicios = await this.dbService.getExerciciosPorTreino(id_treino);
       this.cdr.detectChanges();
@@ -152,6 +154,7 @@ export class MeuTreinoPage {
   // Criar novo treino
   criarTreino() {
     this.criandoTreino = true;
+    this.treinoEmCriacao = true;
     this.novoTreinoNome = '';
     this.exercicios = [];
 
@@ -168,7 +171,8 @@ export class MeuTreinoPage {
       await this.dbService.ready();
       const id_treino = await this.dbService.addTreino(nome);
       this.treinoSelecionado = nome;
-      this.criandoTreino = false;
+      this.criandoTreino = true;
+      this.treinoEmCriacao = false;
       await this.carregarTreinos();
       await this.buscarIdTreinoPorNome(nome);
 
@@ -202,6 +206,8 @@ export class MeuTreinoPage {
 
       // Atualiza tela (força detecção manual por segurança)
       this.cdr.detectChanges();
+      
+      this.criandoTreino = false;
 
       console.log('[APP] Criação do treino finalizada e exercícios carregados.');
 
@@ -210,4 +216,34 @@ export class MeuTreinoPage {
     }
   }
 
+  async registrarTreinoFeito() {
+    // usa o campo correto que existe na classe
+    if (!this.idTreinoAtual || !this.exercicios?.length) {
+      console.warn('[APP] Não há treino ativo ou lista de exercícios vazia.');
+      return;
+    }
+
+    for (const ex of this.exercicios) {
+      // validação leve: garante que temos id_exercicio antes de gravar
+      if (!ex.id_exercicio) {
+        console.warn('[APP] Exercício sem id_exercicio — pulando:', ex);
+        continue;
+      }
+
+      await this.dbService.registrarHistorico(
+        this.idTreinoAtual,
+        ex.id_exercicio,
+        ex.carga_feita || 0,
+        ex.repeticao_feita || 0,
+        ex.series_feito || 0,
+        ex.carga_meta || 0,
+        ex.repeticao_meta || 0,
+        ex.series_meta || 0
+      );
+    }
+
+    console.log('✅ Histórico registrado com sucesso!');
+  }
+
+ 
 }

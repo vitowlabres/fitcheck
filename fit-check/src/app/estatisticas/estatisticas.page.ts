@@ -21,7 +21,7 @@ export class EstatisticasPage implements OnInit {
     'domingo'
   ];
 
-  coresDias: { [dia: string]: string } = {}; // guarda cor dinâmica por dia
+  coresDias: { [dia: string]: string } = {}; 
   treinoSelecionado: any = null;
   exercicios: any[] = [];
   progressoGeral: number = 0;
@@ -29,7 +29,7 @@ export class EstatisticasPage implements OnInit {
   diaSelecionado: string = '';
   nomeTreino: string = ''
   ultimaData: string = '';
-  progressValue: number = 0; // valor de progresso entre 0 e 1
+  progressValue: number = 0; 
   graficoEvolucao: any = null;
   progressoCor: string = 'success';
 
@@ -41,15 +41,14 @@ export class EstatisticasPage implements OnInit {
   }
   
   async atualizarCoresDias() {
-    console.log('[UI] Atualizando cores dos dias...');
-    this.coresDias = {}; // reinicia o mapa de cores
+    this.coresDias = {}; 
 
     for (const dia of this.diasSemana) {
       const treino = await this.dbService.getUltimoTreinoPorDiaSemana(dia);
 
       if (!treino || !treino.exercicios || treino.exercicios.length === 0) {
         // sem treino nesse dia
-        this.coresDias[dia] = 'medium'; // cinza
+        this.coresDias[dia] = 'medium'; 
         continue;
       }
 
@@ -68,8 +67,6 @@ export class EstatisticasPage implements OnInit {
       else if (perc >= 60) this.coresDias[dia] = 'warning'; // amarelo
       else this.coresDias[dia] = 'danger'; // vermelho
     }
-
-    console.log('[UI] Cores dos dias atualizadas:', this.coresDias);
   }
 
   getCorDoDia(dia: string): string {
@@ -234,7 +231,6 @@ export class EstatisticasPage implements OnInit {
       return;
     }
 
-    console.warn('[ES] 206 Dados de evolução:', dadosFiltrados);
     const labels = dadosFiltrados.map((d: any) => d.data);
     const valores = dadosFiltrados.map((d: any) => d.carga_media);
 

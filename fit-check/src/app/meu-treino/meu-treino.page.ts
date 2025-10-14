@@ -48,7 +48,7 @@ export class MeuTreinoPage {
     try {
       this.treinos = await this.dbService.getTreinos();
     } catch (err) {
-      console.error('[DB] Erro ao buscar treinos:', err);
+      console.error('[MT] Erro ao buscar treinos:', err);
     }
   }
 
@@ -56,10 +56,10 @@ export class MeuTreinoPage {
     try {
       const id = await this.dbService.getIdTreinoByNome(nome);
       this.idTreinoAtual = id ?? null;
-      console.log('[DEBUG] ID do treino encontrado:', this.idTreinoAtual);
+      console.log('[MT] ID do treino encontrado:', this.idTreinoAtual);
       return this.idTreinoAtual;
     } catch (err) {
-      console.error('[DB] Erro ao buscar ID do treino:', err);
+      console.error('[MT] Erro ao buscar ID do treino:', err);
       return null;
     }
   }
@@ -74,7 +74,7 @@ export class MeuTreinoPage {
       this.treinoSelecionado = nome_treino;
       this.exercicios = await this.dbService.getExerciciosPorTreino(id_treino);
 
-      // **Inicializa campos 'Feitos' com os valores de meta**
+      // Inicializa campos 'Feitos' com os valores de meta
       this.exercicios.forEach(ex => {
         ex.series_feito = ex.series_feito ?? ex.series_meta;
         ex.repeticao_feita = ex.repeticao_feita ?? ex.repeticao_meta;
@@ -83,7 +83,7 @@ export class MeuTreinoPage {
       this.cdr.detectChanges();
 
     } catch (err) {
-      console.error('[DB] Erro ao carregar exercícios:', err);
+      console.error('[MT] Erro ao carregar exercícios:', err);
     }
   }
 
@@ -92,7 +92,7 @@ export class MeuTreinoPage {
     try {
       const id_treino = await this.dbService.getIdTreinoByNome(nome_treino);
       if (!id_treino) {
-        console.warn('[DB] Nenhum treino encontrado para:', nome_treino);
+        console.warn('[MT] Nenhum treino encontrado para:', nome_treino);
         return;
       }
 
@@ -100,21 +100,21 @@ export class MeuTreinoPage {
       this.treinos = this.treinos.filter(t => t !== nome_treino);
 
     } catch (err) {
-      console.error('[DB] Erro ao desabilitar treino:', err);
+      console.error('[MT] Erro ao desabilitar treino:', err);
     }
   }
 
   async adicionarExercicioAoTreino() {
     try {
       if (!this.idTreinoAtual) {
-        console.warn('[APP] Nenhum treino selecionado.');
+        console.warn('[MT] Nenhum treino selecionado.');
         return;
       }
 
       const { exercicio, series, repeticoes, carga } = this.novoExercicio;
 
       if (!exercicio || !series || !repeticoes || carga === null || carga === undefined) {
-        console.warn('[APP] Campos incompletos para adicionar exercício.');
+        console.warn('[MT] Campos incompletos para adicionar exercício.');
         return;
       }
 
@@ -134,12 +134,13 @@ export class MeuTreinoPage {
       // limpa campos
       this.novoExercicio = { exercicio: null, series: null, repeticoes: null, carga: null };
 
-      console.log('[APP] Exercício adicionado com sucesso!');
+      console.log('[MT] Exercício adicionado com sucesso!');
     } catch (err) {
-      console.error('[DB] Erro ao adicionar exercício ao treino:', err);
+      console.error('[MT] Erro ao adicionar exercício ao treino:', err);
     }
   }
 
+  // Abre o modal de seleção de treinos
   async abrirModal() {
     const modal = await this.modalCtrl.create({
       component: PopUpTreinosComponent,
@@ -151,7 +152,7 @@ export class MeuTreinoPage {
 
     // espera o usuario fechar o modal; captura o dado enviado no dismiss()
     const { data } = await modal.onDidDismiss();
-    console.log('[DEBUG MODAL] Dados retornados do modal:', data);
+    console.log('[MT] Dados retornados do modal:', data);
     if (data?.nome_treino) {
       // se o pop-up já devolveu o id, evita busca extra
       await this.selecionarTreino(data.nome_treino, data.id_treino);
@@ -189,16 +190,16 @@ export class MeuTreinoPage {
 
       // carrega exercícios possíveis para o dropdown
       this.listaExercicios = await this.dbService.getExercicios();
-      console.log('[DEBUG] Lista de exercícios para seleção:', this.listaExercicios);
+      console.log('[MT] Lista de exercícios para seleção:', this.listaExercicios);
     } catch (err) {
-      console.error('[DB] Erro ao criar novo treino:', err);
+      console.error('[MT] Erro ao criar novo treino:', err);
     }
   }
 
   async finalizarCriacaoTreino() {
     try {
       if (!this.idTreinoAtual || !this.treinoSelecionado) {
-        console.warn('[APP] Nenhum treino ativo para finalizar.');
+        console.warn('[MT] Nenhum treino ativo para finalizar.');
         return;
       }
 
@@ -213,7 +214,6 @@ export class MeuTreinoPage {
       this.exercicios = await this.dbService.getExerciciosPorTreino(this.idTreinoAtual);
 
       // Oculta o formulário de adição de novo exercício
-      // this.idTreinoAtual = null;
       this.criandoTreino = false;
 
       this.exercicios.forEach(ex => {
@@ -226,24 +226,24 @@ export class MeuTreinoPage {
       this.cdr.detectChanges();
       
 
-      console.log('[APP] Criação do treino finalizada e exercícios carregados.');
+      console.log('[MT] Criação do treino finalizada e exercícios carregados.');
 
     } catch (err) {
-      console.error('[DB] Erro ao finalizar criação do treino:', err);
+      console.error('[MT] Erro ao finalizar criação do treino:', err);
     }
   }
 
+  // Registra o treino feito na tabela histórico
   async registrarTreinoFeito() {
-    // usa o campo correto que existe na classe
     if (!this.idTreinoAtual || !this.exercicios?.length) {
-      console.warn('[APP] Não há treino ativo ou lista de exercícios vazia.');
+      console.warn('[MT] Não há treino ativo ou lista de exercícios vazia.');
       return;
     }
 
     for (const ex of this.exercicios) {
       // validação leve: garante que temos id_exercicio antes de gravar
       if (!ex.id_exercicio) {
-        console.warn('[APP] Exercício sem id_exercicio — pulando:', ex);
+        console.warn('[MT] Exercício sem id_exercicio — pulando:', ex);
         continue;
       }
 
@@ -266,10 +266,15 @@ export class MeuTreinoPage {
     });
     await toast.present();
     
+<<<<<<< HEAD
     //Envia notificação de treino concluído
     this.nfService.notificarTreinoConcluido();
 
     console.log('Histórico registrado com sucesso!');
   }
  
+=======
+    console.log('[MT] Histórico registrado com sucesso!');
+  }
+>>>>>>> origin/main
 }

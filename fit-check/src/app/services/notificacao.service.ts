@@ -54,7 +54,7 @@ export class NotificacaoService {
                 id: notificationId,
                 title: 'Ótimo treino!',
                 body: 'Confira a sua evolução!',
-                schedule: { at: new Date(Date.now() + 50) }, // leve delay de 0.5s
+                schedule: { at: new Date(Date.now() + 500) },
                 sound: 'default',
                 smallIcon: 'ic_launcher',
                 channelId: 'treino_channel',

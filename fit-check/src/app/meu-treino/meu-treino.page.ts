@@ -259,22 +259,18 @@ export class MeuTreinoPage {
       );
     }
 
+    //Envia notificação de push de treino concluído
+    this.nfService.notificarTreinoConcluido();
+
     const toast = await this.toastCtrl.create({
       message: 'O seu treino foi registrado!',
-      duration: 2000,
+      duration: 1500,
       color: 'success'
     });
     await toast.present();
     
-<<<<<<< HEAD
-    //Envia notificação de treino concluído
-    this.nfService.notificarTreinoConcluido();
 
-    console.log('Histórico registrado com sucesso!');
-  }
- 
-=======
     console.log('[MT] Histórico registrado com sucesso!');
   }
->>>>>>> origin/main
+ 
 }

@@ -18,13 +18,13 @@ ion-title {
 }
 
 .floating-footer {
-  position: fixed; /* fixa na tela */
-  bottom: 16px; /* distância da borda inferior */
-  right: 16px; /* alinhado à direita */
+  position: fixed; 
+  bottom: 16px; 
+  right: 16px; 
   display: flex;
-  flex-direction: column; /* botões empilhados */
-  gap: 12px; /* espaçamento entre botões */
-  z-index: 100; /* fica acima do conteúdo */
+  flex-direction: column; 
+  gap: 12px; 
+  z-index: 100; 
 }
 
 .round-btn {
@@ -107,7 +107,7 @@ ion-title {
   padding: 8px 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: #555;
-  cursor: pointer; /* indica que é clicável futuramente */
+  cursor: pointer; 
   min-height: 50px;
   max-height: 50px;
   min-width: 65px;
@@ -121,13 +121,13 @@ ion-title {
 .treino-novo-card-center {
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* começa do topo do container */
+  align-items: flex-start; 
   height: 100vh;
-  padding: 270px 16px 0 16px; /* distância do topo */
+  padding: 270px 16px 0 16px; 
 }
 
 .treino-novo-card-center ion-card {
-  --background: #a8a8a8; /* cinza claro */
+  --background: #a8a8a8; 
   color: #414141;
   border-radius: 16px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -183,29 +183,29 @@ label-box-nome-treino{
 }
 
 card-content-novo-treino{
-  --background: #a8a8a8; /* mesma cor do exercicio-card */
+  --background: #a8a8a8; 
 }
 
 .btn-adicionar-exercicio{
   --color: black;
 }
 item-content-novo-treino{
-  --background: #a8a8a8; /* branco dentro do item */
+  --background: #a8a8a8; 
 }
 
 ion-input {
-  --background: #a8a8a8; /* branco dentro do input */
+  --background: #a8a8a8; 
   border-radius: 8px;
   padding: 0;
-  color: #414141; /* cor do texto escura */
+  color: #414141; 
 }
 
 div.item-native::after{
-  --background: #a8a8a8 !important; /* mesma cor do exercicio-card */
+  --background: #a8a8a8 !important;
 }
 
 .novo-exercicio-form {
-  background: #a8a8a8; /* mesmo tom do exercicio-card */
+  background: #a8a8a8; 
   border-radius: 16px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   padding: 16px;
@@ -244,7 +244,7 @@ ion-select-option{
 }
 
 ion-content {
-  --background: #1e1e1e; /* fundo geral preto */
+  --background: #1e1e1e; 
 }
 
 /* --- Layout dos campos de metas lado a lado --- */
@@ -258,7 +258,7 @@ ion-content {
 .meta-item {
   flex: 1;
   display: flex;
-  flex-direction: column; /* força o label em cima */
+  flex-direction: column; 
   background: #a8a8a8;
   border-radius: 8px;
   padding: 6px 8px;
@@ -295,12 +295,12 @@ ion-content {
 }
 
 .btn-adicionar-exercicio::part(native) {
-  color: #000 !important; /* força o texto preto */
+  color: #000 !important; 
 }
 
 .btn-adicionar-exercicio {
-  --color: #000 !important; /* redundância para cobrir variações */
-  --background: #a8a8a8 !important; /* mantém o fundo coerente */
+  --color: #000 !important; 
+  --background: #a8a8a8 !important; 
   font-weight: 600;
 }
 
@@ -329,7 +329,7 @@ ion-input.valor-box::part(native) {
 }
 
 .registrar-btn {
-  --background: #28a745; /* verde */
+  --background: #28a745; 
   --color: #fff;
   font-weight: bold;
   text-transform: uppercase;

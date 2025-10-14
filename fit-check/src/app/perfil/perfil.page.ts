@@ -63,6 +63,7 @@ export class PerfilPage implements OnInit {
     return !!nome || !!this.cidadeFiltro || !!this.ufFiltro;
   }
 
+  // Funções para seleção e captura de foto
   async selecionarFoto() {
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Selecionar Foto',
@@ -88,6 +89,7 @@ export class PerfilPage implements OnInit {
     await actionSheet.present();
   }
 
+  // Escolher foto da galeria
   async escolherFoto() {
     const permitido = await this.verificarPermissaoGaleria();
     if (!permitido) return;
@@ -106,6 +108,7 @@ export class PerfilPage implements OnInit {
     }
   }
 
+  // Tirar foto com a câmera
   async tirarFoto() {
     const permitido = await this.verificarPermissaoCamera();
     if (!permitido) return;

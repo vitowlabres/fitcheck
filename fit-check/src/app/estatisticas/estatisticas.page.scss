@@ -68,7 +68,6 @@ ion-progress-bar {
   padding: 4px;
   gap: 4px;
   border-radius: 50% !important;
-  // margin: 0 4px;
 }
 
 .dias-semana ion-button {
@@ -78,19 +77,18 @@ ion-progress-bar {
   --padding-top: 0;
   --padding-bottom: 0;
 
-  width: 55px;     /* largura fixa */
-  height: 55px;    /* altura igual à largura */
+  width: 55px;     
+  height: 55px;   
   min-width: 0;
   min-height: 0;
   
   border-radius: 50% !important;
-  // flex: 1 1 calc(100% / 7);
   flex: 0 0 auto;
   margin: 0;
   font-size: 0.7rem;
   text-transform: uppercase;
   padding: 2px 0;
-  min-width: 0; /* evita forçar largura mínima */
+  min-width: 0; 
 }
 
 .percentual {
@@ -106,8 +104,8 @@ ion-progress-bar {
   position: relative;
   width: 100%;
   display: flex;
-  align-items: center; /* centraliza verticalmente */
-  justify-content: center; /* centraliza horizontalmente */
+  align-items: center; 
+  justify-content: center; 
 }
 
 .container-label {

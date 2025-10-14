@@ -49,49 +49,46 @@ export class DatabaseService {
 
   // Inicializa o banco de dados, cria tabelas e popula com dados iniciais
   async initializeDatabase(): Promise<void> {
-  console.log('[DB] Inicializando...');
+    console.log('[DB] Inicializando...');
 
-  if ((window as any).Capacitor?.getPlatform?.() === 'web') {
-    try {
-      (CapacitorSQLite as any).wasmPath = "assets/wasm";
-      await (CapacitorSQLite as any).initWebStore();
-      console.log('[DB] initWebStore chamado com sucesso');
-    } catch (err) {
-      console.error('[DB] Erro no initWebStore:', err);
+    if ((window as any).Capacitor?.getPlatform?.() === 'web') {
+      try {
+        (CapacitorSQLite as any).wasmPath = "assets/wasm";
+        await (CapacitorSQLite as any).initWebStore();
+      } catch (err) {
+        console.error('[DB] Erro no initWebStore:', err);
+      }
     }
-  }
-
-  try {
-    let db: SQLiteDBConnection;
 
     try {
-      const isConn = (await this.sqlite.isConnection('fitcheckDB', false)).result;
-      if (isConn) {
-        db = await this.sqlite.retrieveConnection('fitcheckDB', false);
-      } else {
+      let db: SQLiteDBConnection;
+
+      try {
+        const isConn = (await this.sqlite.isConnection('fitcheckDB', false)).result;
+        if (isConn) {
+          db = await this.sqlite.retrieveConnection('fitcheckDB', false);
+        } else {
+          db = await this.sqlite.createConnection('fitcheckDB', false, 'no-encryption', 1, false);
+        }
+      } catch {
         db = await this.sqlite.createConnection('fitcheckDB', false, 'no-encryption', 1, false);
       }
-    } catch {
-    // Criar conexão
-      db = await this.sqlite.createConnection('fitcheckDB', false, 'no-encryption', 1, false);
-      console.log('[DB] catch...');
+
+      await db.open();
+      this.db = db;
+      console.log('[DB] Conexão aberta');
+
+      await this.createTables();
+      await this.populateExercicios();
+      await this.populateTreinos();
+      await this.populateHistorico();
+      await this.populateTreinador();
+
+      this.readyResolver();
+    } catch (err) {
+      console.error('[DB] Erro ao inicializar:', err);
     }
-
-    await db.open();
-    this.db = db;
-    console.log('[DB] Conexão aberta');
-
-    await this.createTables();
-    await this.populateExercicios();
-    await this.populateTreinos();
-    await this.populateHistorico();
-    await this.populateTreinador();
-
-    this.readyResolver();
-  } catch (err) {
-    console.error('[DB] Erro ao inicializar:', err);
   }
-}
 
   async ready(): Promise<void> {
     return this.isReady;
@@ -225,7 +222,7 @@ export class DatabaseService {
       return; 
     }
 
-    console.log('[DB] Inserindo treinos e vínculos...');
+    console.log('[DB] Inserindo treinos ...');
 
     //Inserir os treinos principais
     const treinos = ['Leg Day', 'Costas', 'Ombro', 'Peito', 'Braço'];
@@ -281,13 +278,13 @@ export class DatabaseService {
   }
   
   async populateHistorico() {
-    console.log('[DB] Populando tabela historico com múltiplas execuções por treino...');
+    console.log('[DB] Populando tabela historico...');
 
     try {
       const db = await this.sqlite.retrieveConnection('fitcheckDB', false);
       if (!db) throw new Error('Conexão com o banco não encontrada.');
 
-      // Limpa o histórico antigo (evita duplicar durante os testes)
+      // Limpa o histórico antigo 
       await db.execute('DELETE FROM historico;');
 
       // Tabelas base
@@ -311,23 +308,21 @@ export class DatabaseService {
       ];
       const hoje = new Date();
 
-      // Helpers
+      // Função para obter a data do último dia específico 
       const getDateForWeekday = (base: Date, weekdayIndex: number, weeksAgo: number): Date => {
-        // weekdayIndex: 0=domingo ... 6=sábado
         const d = new Date(base);
         const current = d.getDay();
-        const diffToTarget = (current + 7 - weekdayIndex) % 7; // quantos dias atrás está o weekday desejado
+        const diffToTarget = (current + 7 - weekdayIndex) % 7; 
         d.setDate(d.getDate() - diffToTarget - (weeksAgo * 7));
         d.setHours(0, 0, 0, 0);
         return d;
       };
 
-      // Configuração simples e realista
       const SEMANAS = 2;             // quantas semanas passadas considerar
-      const SESSOES_POR_SEMANA = 2;  // quantos dias por semana esse treino foi feito (ex.: 2x/sem)
+      const SESSOES_POR_SEMANA = 2;  // quantos dias por semana esse treino foi feito 
 
+      // Para cada treino, pega os exercícios e gera sessões
       for (const treino of treinos) {
-        // exercícios (com metas) desse treino
         const exRes = await db.query(
           'SELECT id_exercicio, series_meta, repeticao_meta, carga_meta FROM treino_exercicios WHERE id_treino = ?;',
           [treino.id_treino]
@@ -335,15 +330,13 @@ export class DatabaseService {
         const exercicios = exRes.values || [];
         if (!exercicios.length) continue;
 
-        // Escolhe 2 dias fixos da semana para este treino (ex.: Seg/Qui, Ter/Sex, Qua/Sab...)
-        // 0=Dom, 1=Seg, 2=Ter, 3=Qua, 4=Qui, 5=Sex, 6=Sab
         const todosDias = [1,2,3,4,5,6,0];
         const escolhidos = new Set<number>();
         while (escolhidos.size < SESSOES_POR_SEMANA) {
           const pick = todosDias[Math.floor(Math.random() * todosDias.length)];
           escolhidos.add(pick);
         }
-        const diasEscolhidos = Array.from(escolhidos); // ex.: [1,4] → segunda e quinta
+        const diasEscolhidos = Array.from(escolhidos); 
 
         // Para cada semana no passado e para cada dia escolhido, gera uma sessão completa
         for (let w = 0; w < SEMANAS; w++) {
@@ -356,8 +349,7 @@ export class DatabaseService {
               const repMeta   = ex.repeticao_meta ?? 0;
               const seriesMeta= ex.series_meta ?? 0;
 
-              // Variações realistas (para colorir success/warning/danger nas estatísticas)
-              // Faixas pensadas para gerar resultados às vezes acima, às vezes abaixo da meta
+              // Variações aleatórias para simular carga, repetições e séries feitas
               const fCarga   = 0.65 + Math.random() * 0.5;  // 65% a 115% da meta
               const fRep     = 0.80 + Math.random() * 0.4;  // 80% a 120% da meta
               const fSeries  = 0.85 + Math.random() * 0.3;  // 85% a 115% da meta
@@ -390,7 +382,7 @@ export class DatabaseService {
         }
       }
 
-      console.log('[DB] Histórico populado com múltiplas execuções por treino (semanas recentes).');
+      console.log('[DB] Histórico populado.');
     } catch (err) {
       console.error('[DB] Erro ao popular histórico:', err);
     }
@@ -409,9 +401,11 @@ export class DatabaseService {
       ('Larissa Mello', '(21) 99988-6677', 'larissa.mello@exemplo.com', 'Rio de Janeiro', 'RJ'),
       ('Fernanda Costa', '(41) 99644-5566', 'fernanda.costa@exemplo.com', 'Curitiba', 'PR'),
       ('Rafael Souza', '(41) 99555-7788', 'rafael.souza@exemplo.com', 'Curitiba', 'PR'),
-      ('Juliana Nunes', '(41) 99466-8899', 'juliana.nunes@exemplo.com', 'Londrina', 'PR'),      ('Juliana Martins', '(48) 99088-6677', 'juliana.martins@exemplo.com', 'Florianópolis', 'SC'),
+      ('Juliana Nunes', '(41) 99466-8899', 'juliana.nunes@exemplo.com', 'Londrina', 'PR'), 
+      ('Juliana Martins', '(48) 99088-6677', 'juliana.martins@exemplo.com', 'Florianópolis', 'SC'),
       ('Pedro Henrique', '(48) 99177-5566', 'pedro.henrique@exemplo.com', 'Florianópolis', 'SC'),
-      ('Carla Mendes', '(48) 99266-3344', 'carla.mendes@exemplo.com', 'Novo Hamburgo', 'RS'),      ('Carla Pereira', '(51) 99422-6677', 'carla.pereira@exemplo.com', 'Porto Alegre', 'RS'),
+      ('Carla Mendes', '(48) 99266-3344', 'carla.mendes@exemplo.com', 'Novo Hamburgo', 'RS'),     
+      ('Carla Pereira', '(51) 99422-6677', 'carla.pereira@exemplo.com', 'Porto Alegre', 'RS'),
       ('Rodrigo Ferreira', '(51) 99533-7788', 'rodrigo.ferreira@exemplo.com', 'Guaíba', 'RS'),
       ('Ana Paula', '(51) 99644-8899', 'ana.paula@exemplo.com', 'Porto Alegre', 'RS');
   `;
@@ -512,7 +506,7 @@ export class DatabaseService {
 
       const nome_treino = treinoRes.values?.[0]?.nome_treino ?? 'Treino';
 
-      // Buscar os exercícios do treino, referentes àquela data
+      // Buscar os exercícios do treino
       const exRes = await db.query(
         `
         SELECT 

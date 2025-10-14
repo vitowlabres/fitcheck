@@ -32,7 +32,7 @@
     <canvas id="graficoTreino"></canvas>
   </div>
 
-  <!--  Lista de exercícios (após escolher o dia) -->
+  <!--  Lista de exercícios do dia selecionado -->
   <ion-item *ngIf="exercicios.length > 0">
     <ion-label>Selecione um exercício</ion-label>
     <ion-select (ionChange)="selecionarExercicio($event.detail.value)">
@@ -55,7 +55,6 @@
 
   <!-- Gráfico de linha “evolução de carga” -->
   <div class="grafico-container">
-    <!-- <p class="container-label">Progressão de carga</p> -->
     <canvas id="graficoEvolucaoCarga"></canvas>
   </div>
 </ion-content>

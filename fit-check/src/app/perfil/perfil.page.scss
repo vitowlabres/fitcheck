@@ -122,24 +122,21 @@ ion-card-subtitle {
 }
 
 .user-info ion-item {
-  --background: #2b2b2b; /* mantém fundo escuro */
-  --color: #ffffff; /* cor do texto e ícones */
+  --background: #2b2b2b; 
+  --color: #ffffff; 
   --placeholder-color: #bbbbbb;
-  --highlight-color-focused: #3b82f6; /* cor da linha ativa */
+  --highlight-color-focused: #3b82f6; 
   border-radius: 6px;
 }
 
-/* Rótulo (ex: Nome, Idade, etc.) */
 .user-info ion-label {
   color: #cccccc !important;
 }
 
-/* Texto digitado dentro do input */
 .user-info ion-input {
   color: #ffffff !important;
 }
 
-/* Ícones dentro dos itens, caso existam */
 .user-info ion-icon {
   color: #ffffff !important;
 }
@@ -196,8 +193,8 @@ ion-item {
   margin: 12px 16px;
   padding: 12px;
   border-radius: 12px;
-  background-color: #a8a8a8; /* mesmo fundo dos cards */
-  color: #2a2a2a; /* texto escuro */
+  background-color: #a8a8a8; 
+  color: #2a2a2a; 
   text-align: center;
   font-size: 0.95rem;
 }

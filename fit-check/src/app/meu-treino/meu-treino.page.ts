@@ -216,6 +216,7 @@ export class MeuTreinoPage {
       // Oculta o formulário de adição de novo exercício
       this.criandoTreino = false;
 
+      // Inicializa campos 'Feitos' com os valores de meta
       this.exercicios.forEach(ex => {
         ex.series_feito = ex.series_feito ?? ex.series_meta;
         ex.repeticao_feita = ex.repeticao_feita ?? ex.repeticao_meta;
@@ -225,7 +226,6 @@ export class MeuTreinoPage {
       // Atualiza tela (força detecção manual por segurança)
       this.cdr.detectChanges();
       
-
       console.log('[MT] Criação do treino finalizada e exercícios carregados.');
 
     } catch (err) {

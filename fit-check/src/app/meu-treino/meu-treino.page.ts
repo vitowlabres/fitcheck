@@ -71,7 +71,6 @@ export class MeuTreinoPage {
       this.idTreinoAtual = id_treino;
       this.treinoSelecionado = nome_treino;
       this.exercicios = await this.dbService.getExerciciosPorTreino(id_treino);
-      console.log(`this.idTreinoAtual 4: ${this.idTreinoAtual}`)
 
       // **Inicializa campos 'Feitos' com os valores de meta**
       this.exercicios.forEach(ex => {
@@ -80,7 +79,6 @@ export class MeuTreinoPage {
         ex.carga_feita = ex.carga_feita ?? ex.carga_meta;
       });
       this.cdr.detectChanges();
-      console.log(`this.idTreinoAtual 5: ${this.idTreinoAtual}`)
 
     } catch (err) {
       console.error('[DB] Erro ao carregar exercícios:', err);
@@ -127,15 +125,12 @@ export class MeuTreinoPage {
         repeticoes,
         carga
       );
-      console.log(`this.idTreinoAtual 1: ${this.idTreinoAtual}`)
 
       // recarrega lista de exercícios do treino
       this.exercicios = await this.dbService.getExerciciosPorTreino(this.idTreinoAtual);
-      console.log(`this.idTreinoAtual 2: ${this.idTreinoAtual}`)
 
       // limpa campos
       this.novoExercicio = { exercicio: null, series: null, repeticoes: null, carga: null };
-      console.log(`this.idTreinoAtual 3: ${this.idTreinoAtual}`)
 
       console.log('[APP] Exercício adicionado com sucesso!');
     } catch (err) {
@@ -239,12 +234,6 @@ export class MeuTreinoPage {
   async registrarTreinoFeito() {
     // usa o campo correto que existe na classe
     if (!this.idTreinoAtual || !this.exercicios?.length) {
-      if (!this.idTreinoAtual) {
-        console.warn(`problema é no treino: treino: ${this.idTreinoAtual} exercicios:${this.exercicios?.length}`);
-      }
-      if (!this.exercicios?.length) {
-        console.warn(`problema é nos exercícios:  treino: ${this.idTreinoAtual} exercicios:${this.exercicios?.length}`);
-      }
       console.warn('[APP] Não há treino ativo ou lista de exercícios vazia.');
       return;
     }
@@ -256,7 +245,7 @@ export class MeuTreinoPage {
         continue;
       }
 
-      await this.dbService.registrarHistorico(
+      await this.dbService.addHistorico(
         this.idTreinoAtual,
         ex.id_exercicio,
         ex.carga_feita || 0,
@@ -275,8 +264,7 @@ export class MeuTreinoPage {
     });
     await toast.present();
     
-
-    console.log('✅ Histórico registrado com sucesso!');
+    console.log('Histórico registrado com sucesso!');
   }
 
  

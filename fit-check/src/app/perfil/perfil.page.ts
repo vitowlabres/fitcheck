@@ -97,7 +97,7 @@ export class PerfilPage implements OnInit {
         quality: 90,
         allowEditing: false,
         resultType: CameraResultType.DataUrl,
-        source: CameraSource.Photos, // 📁 abre a galeria
+        source: CameraSource.Photos,
       });
 
       this.fotoPerfil = image.dataUrl ?? null;

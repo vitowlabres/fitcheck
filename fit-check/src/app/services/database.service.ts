@@ -416,11 +416,9 @@ export class DatabaseService {
       ('Ana Paula', '(51) 99644-8899', 'ana.paula@exemplo.com', 'Porto Alegre', 'RS');
   `;
 
-
   await this.db.execute(insertTreinadores);
   console.log('[DB] Tabela "treinador" populada com sucesso.');
   }
-
 
   // Retorna os nomes dos treinos
   async getTreinos(): Promise<string[]> {
@@ -476,115 +474,6 @@ export class DatabaseService {
     console.log('[DEBUG DB] getExerciciosPorTreino retornou (valores):', result.values);
     console.log(JSON.stringify(result, null, 2));
     return result.values || [];
-  }
-
-  // Adiciona um novo treino e retorna seu ID
-  async addTreino(nome_treino: string): Promise<number> {
-    if (!this.db) throw new Error('DB não aberto');
-
-    const result = await this.db.run(
-      `INSERT INTO treinos (nome_treino) VALUES (?)`,
-      [nome_treino]
-    );
-
-    console.log('[DB] Novo treino inserido:', nome_treino);
-
-    // Retorna o id_treino recém-criado
-    const idResult = await this.db.query('SELECT last_insert_rowid() as id_treino');
-    const id_treino = idResult.values?.[0]?.id_treino || null;
-
-    console.log('[DB] ID do treino criado:', id_treino);
-    return id_treino;
-  }
-
-  // Desabilita um treino
-  async desabilitarTreino(id_treino: number): Promise<void> {
-  if (!this.db) throw new Error('DB não aberto');
-
-  await this.db.run(
-    'UPDATE treinos SET ativo = 0 WHERE id_treino = ?',
-    [id_treino]
-  );
-
-  console.log('[DB] Treino desabilitado (soft delete), ID:', id_treino);
-  }
-  
-  // Adiciona um exercício a um treino específico
-  async addExercicioAoTreino(
-    id_treino: number,
-    id_exercicio: number,
-    series_meta: number,
-    repeticao_meta: number,
-    carga_meta: number
-  ): Promise<void> {
-    if (!this.db) throw new Error('DB não aberto');
-
-    await this.db.run(
-      `INSERT INTO treino_exercicios 
-        (id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta) 
-      VALUES (?, ?, ?, ?, ?)`,
-      [id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta]
-    );
-
-    console.log(`[DB] Exercício ${id_exercicio} vinculado ao treino ${id_treino}`);
-  }
-
-  // Cria novo vínculo entre treino e exercício
-  async addTreino_exercicios(
-    id_treino: number,
-    id_exercicio: number,
-    series: number,
-    repeticoes: number,
-    carga: number
-  ): Promise<void> {
-    if (!this.db) throw new Error('DB não aberto');
-    await this.db.run(
-      `INSERT INTO treino_exercicios (id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta)
-      VALUES (?, ?, ?, ?, ?);`,
-      [id_treino, id_exercicio, series, repeticoes, carga]
-    );
-    console.log('[DB] Exercício adicionado ao treino:', { id_treino, id_exercicio, series, repeticoes, carga });
-  }
-
-  // Registra uma entrada no histórico de treinos
-  async registrarHistorico(
-    id_treino: number,
-    id_exercicio: number,
-    carga_feita: number,
-    repeticao_feita: number,
-    series_feito: number,
-    carga_meta: number,
-    repeticao_meta: number,
-    series_meta: number
-  ): Promise<void> {
-    if (!this.db) throw new Error('DB não aberto');
-
-    // Data e dia da semana atuais
-    const data = new Date();
-    const dataStr = data.toISOString().split('T')[0]; // formato YYYY-MM-DD
-    const diaSemana = data.toLocaleDateString('pt-BR', { weekday: 'long' });
-
-    await this.db.run(
-      `INSERT INTO historico (
-        id_treino, id_exercicio, data, dia_semana,
-        carga_feita, repeticao_feita, series_feito,
-        carga_meta, repeticao_meta, series_meta
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        id_treino,
-        id_exercicio,
-        dataStr,
-        diaSemana,
-        carga_feita,
-        repeticao_feita,
-        series_feito,
-        carga_meta,
-        repeticao_meta,
-        series_meta
-      ]
-    );
-
-    console.log(`[DB] Histórico registrado para treino ${id_treino}, exercício ${id_exercicio}`);
   }
 
   async getUltimoTreinoPorDiaSemana(diaSemana: string) {
@@ -715,5 +604,112 @@ export class DatabaseService {
     return result.values || [];
   }
 
+    // Adiciona um novo treino e retorna seu ID
+  async addTreino(nome_treino: string): Promise<number> {
+    if (!this.db) throw new Error('DB não aberto');
 
+    const result = await this.db.run(
+      `INSERT INTO treinos (nome_treino) VALUES (?)`,
+      [nome_treino]
+    );
+
+    console.log('[DB] Novo treino inserido:', nome_treino);
+
+    // Retorna o id_treino recém-criado
+    const idResult = await this.db.query('SELECT last_insert_rowid() as id_treino');
+    const id_treino = idResult.values?.[0]?.id_treino || null;
+
+    console.log('[DB] ID do treino criado:', id_treino);
+    return id_treino;
+  }
+
+  // Desabilita um treino
+  async desabilitarTreino(id_treino: number): Promise<void> {
+  if (!this.db) throw new Error('DB não aberto');
+
+  await this.db.run(
+    'UPDATE treinos SET ativo = 0 WHERE id_treino = ?',
+    [id_treino]
+  );
+
+  console.log('[DB] Treino desabilitado (soft delete), ID:', id_treino);
+  }
+  
+  // Adiciona um exercício a um treino específico
+  async addExercicioAoTreino(
+    id_treino: number,
+    id_exercicio: number,
+    series_meta: number,
+    repeticao_meta: number,
+    carga_meta: number
+  ): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    await this.db.run(
+      `INSERT INTO treino_exercicios 
+        (id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta) 
+      VALUES (?, ?, ?, ?, ?)`,
+      [id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta]
+    );
+
+    console.log(`[DB] Exercício ${id_exercicio} vinculado ao treino ${id_treino}`);
+  }
+
+  // Cria novo vínculo entre treino e exercício
+  async addTreino_exercicios(
+    id_treino: number,
+    id_exercicio: number,
+    series: number,
+    repeticoes: number,
+    carga: number
+  ): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+    await this.db.run(
+      `INSERT INTO treino_exercicios (id_treino, id_exercicio, series_meta, repeticao_meta, carga_meta)
+      VALUES (?, ?, ?, ?, ?);`,
+      [id_treino, id_exercicio, series, repeticoes, carga]
+    );
+    console.log('[DB] Exercício adicionado ao treino:', { id_treino, id_exercicio, series, repeticoes, carga });
+  }
+
+  // Registra uma entrada no histórico de treinos
+  async addHistorico(
+    id_treino: number,
+    id_exercicio: number,
+    carga_feita: number,
+    repeticao_feita: number,
+    series_feito: number,
+    carga_meta: number,
+    repeticao_meta: number,
+    series_meta: number
+  ): Promise<void> {
+    if (!this.db) throw new Error('DB não aberto');
+
+    // Data e dia da semana atuais
+    const data = new Date();
+    const dataStr = data.toISOString().split('T')[0]; // formato YYYY-MM-DD
+    const diaSemana = data.toLocaleDateString('pt-BR', { weekday: 'long' });
+
+    await this.db.run(
+      `INSERT INTO historico (
+        id_treino, id_exercicio, data, dia_semana,
+        carga_feita, repeticao_feita, series_feito,
+        carga_meta, repeticao_meta, series_meta
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id_treino,
+        id_exercicio,
+        dataStr,
+        diaSemana,
+        carga_feita,
+        repeticao_feita,
+        series_feito,
+        carga_meta,
+        repeticao_meta,
+        series_meta
+      ]
+    );
+
+    console.log(`[DB] Histórico registrado para treino ${id_treino}, exercício ${id_exercicio}`);
+  }
 }

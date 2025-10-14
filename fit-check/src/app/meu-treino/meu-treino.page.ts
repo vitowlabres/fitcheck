@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/co
 import { DatabaseService } from '../services/database.service';
 import { ModalController, ToastController} from '@ionic/angular';
 import { PopUpTreinosComponent } from '../pop-up-treinos/pop-up-treinos.component';
+import { NotificacaoService } from '../services/notificacao.service';
 
 @Component({
   selector: 'app-meu-treino',
@@ -34,7 +35,8 @@ export class MeuTreinoPage {
     private dbService: DatabaseService,
     private modalCtrl: ModalController,
     private cdr: ChangeDetectorRef,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private nfService: NotificacaoService
   ) { }
 
   async ngOnInit() {
@@ -264,8 +266,10 @@ export class MeuTreinoPage {
     });
     await toast.present();
     
+    //Envia notificação de treino concluído
+    this.nfService.notificarTreinoConcluido();
+
     console.log('Histórico registrado com sucesso!');
   }
-
  
 }

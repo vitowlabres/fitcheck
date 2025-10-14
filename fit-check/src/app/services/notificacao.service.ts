@@ -44,4 +44,26 @@ export class NotificacaoService {
 
         console.log('Notificação diária agendada para as 10h');
     }
+
+    async notificarTreinoConcluido() {
+        // Gera um id seguro (entre 1 e 1.000.000)
+        const notificationId = Math.floor(Math.random() * 1000000) + 1;
+        await LocalNotifications.schedule({
+        notifications: [
+            {
+                id: notificationId,
+                title: 'Ótimo treino!',
+                body: 'Confira a sua evolução!',
+                schedule: { at: new Date(Date.now() + 50) }, // leve delay de 0.5s
+                sound: 'default',
+                smallIcon: 'ic_launcher',
+                channelId: 'treino_channel',
+                ongoing: false,
+                autoCancel: true,
+            },
+        ],
+        });
+
+    console.log('Notificação de treino concluído enviada');
+  }
 }

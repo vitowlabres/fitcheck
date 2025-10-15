@@ -17,10 +17,10 @@ export class MeuTreinoPage {
   treinoSelecionado: string | null = null;
   criandoTreino: boolean = false;
   novoTreinoNome: string = '';
-  treinoEmCriacao: boolean = false; // indica se estamos no processo de criação de um novo treino
+  treinoEmCriacao: boolean = false; 
   idTreinoAtual: number | null = null;
 
-    // Campos do formulário de adição de exercício
+  // Campos do formulário de adição de exercício
   novoExercicio: any = {
     exercicio: null,
     series: null,
@@ -29,7 +29,7 @@ export class MeuTreinoPage {
   };
   listaExercicios: any[] = [];
 
-   @ViewChild('inputNovoTreino', { static: false }) inputNovoTreino!: ElementRef;
+  @ViewChild('inputNovoTreino', { static: false }) inputNovoTreino!: ElementRef;
 
   constructor(
     private dbService: DatabaseService,
@@ -216,7 +216,7 @@ export class MeuTreinoPage {
       // Oculta o formulário de adição de novo exercício
       this.criandoTreino = false;
 
-      // Inicializa campos 'Feitos' com os valores de meta
+      // Preenche campos 'Feitos' com os valores de meta
       this.exercicios.forEach(ex => {
         ex.series_feito = ex.series_feito ?? ex.series_meta;
         ex.repeticao_feita = ex.repeticao_feita ?? ex.repeticao_meta;
